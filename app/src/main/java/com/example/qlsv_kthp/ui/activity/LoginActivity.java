@@ -1,4 +1,4 @@
-package com.example.qlsv_kthp.ui;
+package com.example.qlsv_kthp.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import com.example.qlsv_kthp.model.TaiKhoan;
 import com.example.qlsv_kthp.util.SecurityUtils;
 import com.example.qlsv_kthp.util.SessionManager;
 
+/**
+ * Màn hình Đăng nhập - Xử lý xác thực người dùng
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
@@ -23,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Sử dụng ViewBinding để quản lý layout
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -35,16 +39,18 @@ public class LoginActivity extends AppCompatActivity {
                 String user = binding.etUsername.getText().toString().trim();
                 String pass = binding.etPassword.getText().toString().trim();
 
+                // Kiểm tra dữ liệu đầu vào
                 if (user.isEmpty() || pass.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Hash input password
+                // Mã hóa mật khẩu trước khi kiểm tra trong database
                 String hashedPass = SecurityUtils.sha256(pass);
                 TaiKhoan account = dbHelper.checkLogin(user, hashedPass);
                 
                 if (account != null) {
+                    // Lưu phiên đăng nhập và chuyển sang màn hình chính
                     session.createLoginSession(account);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();

@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 
 import com.example.qlsv_kthp.model.TaiKhoan;
 
+/**
+ * Quản lý phiên làm việc của người dùng qua SharedPreferences
+ */
 public class SessionManager {
     private static final String PREF_NAME = "QLSV_Session";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
@@ -24,6 +27,9 @@ public class SessionManager {
         editor = pref.edit();
     }
 
+    /**
+     * Tạo phiên đăng nhập khi user login thành công
+     */
     public void createLoginSession(TaiKhoan user) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putInt(KEY_USER_ID, user.getId());
@@ -34,10 +40,16 @@ public class SessionManager {
         editor.commit();
     }
 
+    /**
+     * Kiểm tra trạng thái đăng nhập
+     */
     public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
+    /**
+     * Xóa thông tin phiên khi đăng xuất
+     */
     public void logoutUser() {
         editor.clear();
         editor.commit();
@@ -48,7 +60,7 @@ public class SessionManager {
     }
 
     public String getFullName() {
-        return pref.getString(KEY_FULLNAME, "");
+        return pref.getString(KEY_FULLNAME, "Người dùng");
     }
 
     public int getMaSV() {

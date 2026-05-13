@@ -9,11 +9,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Tiện ích xử lý File (Đọc/Ghi, Xuất CSV)
+ */
 public class FileUtils {
 
+    /**
+     * Xuất dữ liệu ra file CSV lưu tại bộ nhớ thiết bị
+     */
     public static void exportToCSV(Context context, String fileName, List<String[]> data) {
+        // Lưu vào thư mục Documents của ứng dụng
         File folder = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        if (!folder.exists()) {
+        if (folder != null && !folder.exists()) {
             folder.mkdirs();
         }
 
@@ -33,7 +40,7 @@ public class FileUtils {
             Toast.makeText(context, "Đã xuất file tại: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(context, "Lỗi xuất file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Lỗi khi xuất file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -14,6 +14,9 @@ import com.example.qlsv_kthp.databinding.ActivityDashboardBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
 import com.example.qlsv_kthp.util.SessionManager;
 
+/**
+ * Fragment hiển thị các số liệu thống kê tổng quan
+ */
 public class DashboardFragment extends Fragment {
 
     private ActivityDashboardBinding binding;
@@ -25,10 +28,10 @@ public class DashboardFragment extends Fragment {
         binding = ActivityDashboardBinding.inflate(inflater, container, false);
         dbHelper = new DatabaseHelper(getContext());
 
-        // Setup stats
+        // Cập nhật các con số thống kê
         updateStats();
 
-        // Hide navigation bar inside fragment if it exists in layout (to avoid double nav)
+        // Ẩn thanh tiêu đề thừa nếu có trong layout
         if (binding.layoutNavBar != null) {
             binding.layoutNavBar.setVisibility(View.GONE);
         }
@@ -36,8 +39,12 @@ public class DashboardFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Lấy dữ liệu thực tế từ Database để hiển thị lên UI
+     */
     private void updateStats() {
         SessionManager session = new SessionManager(getContext());
+        // Chào mừng người dùng bằng tên thật
         binding.tvGreeting.setText(getString(R.string.xin_ch_o_c_u_ch, session.getFullName()));
 
         int students = dbHelper.getCount(DatabaseHelper.TABLE_SINH_VIEN);

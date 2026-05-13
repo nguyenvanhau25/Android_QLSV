@@ -11,11 +11,17 @@ import com.example.qlsv_kthp.model.SinhVien;
 
 import java.util.List;
 
+/**
+ * Bộ nạp dữ liệu (Adapter) cho danh sách Sinh viên
+ */
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHolder> {
 
     private List<SinhVien> studentList;
     private OnItemClickListener listener;
 
+    /**
+     * Giao diện xử lý sự kiện khi nhấn vào một sinh viên
+     */
     public interface OnItemClickListener {
         void onItemClick(SinhVien student);
     }
@@ -35,13 +41,18 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SinhVien student = studentList.get(position);
+        
+        // Hiển thị thông tin cơ bản
         holder.binding.tvStudentName.setText(student.getHoTen());
-        holder.binding.tvStudentMeta.setText(student.getMaSV() + " • " + (student.getTenLop() != null ? student.getTenLop() : "N/A"));
+        holder.binding.tvStudentMeta.setText(student.getMaSV() + " • " + (student.getTenLop() != null ? student.getTenLop() : "Chưa xếp lớp"));
+        
+        // Hiển thị ký tự viết tắt làm ảnh đại diện tạm thời
         holder.binding.tvAvatarInitials.setText(student.getInitial());
         
-        // Example score, logic can be updated later
+        // Mặc định hiển thị điểm (logic thật sẽ lấy từ Database)
         holder.binding.tvStudentScore.setText("GPA: 0.0");
 
+        // Sự kiện click vào item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(student);
@@ -54,6 +65,9 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
         return studentList.size();
     }
 
+    /**
+     * Lớp giữ các view trong một dòng dữ liệu
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ItemStudentBinding binding;
 

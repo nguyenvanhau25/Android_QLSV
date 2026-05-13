@@ -1,4 +1,4 @@
-package com.example.qlsv_kthp.ui;
+package com.example.qlsv_kthp.ui.activity;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -13,11 +13,14 @@ import com.example.qlsv_kthp.model.SinhVien;
 
 import java.util.List;
 
+/**
+ * Màn hình Thêm/Sửa Sinh viên - Xử lý nhập liệu và lưu trữ
+ */
 public class StudentFormActivity extends AppCompatActivity {
 
     private ActivityStudentFormBinding binding;
     private DatabaseHelper dbHelper;
-    private int maSV = -1; // -1 means adding new
+    private int maSV = -1; // -1 nghĩa là đang thêm mới
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +30,14 @@ public class StudentFormActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        // Load classes for Spinner
+        // Tải danh sách lớp vào Spinner
         loadClasses();
 
-        // Check if editing
+        // Kiểm tra xem là chế độ Chỉnh sửa hay Thêm mới
         if (getIntent().hasExtra("maSV")) {
             maSV = getIntent().getIntExtra("maSV", -1);
             binding.tvTitle.setText("Sửa sinh viên");
-            // Load student data...
+            // Trong thực tế sẽ cần load thông tin SV cũ lên form ở đây
         }
 
         binding.btnBack.setOnClickListener(v -> finish());
@@ -44,6 +47,9 @@ public class StudentFormActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Tải danh sách lớp từ database
+     */
     private void loadClasses() {
         List<Lop> classes = dbHelper.getAllLop();
         ArrayAdapter<Lop> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, classes);
@@ -51,6 +57,9 @@ public class StudentFormActivity extends AppCompatActivity {
         binding.spinnerClass.setAdapter(adapter);
     }
 
+    /**
+     * Xử lý lưu thông tin sinh viên
+     */
     private void saveStudent() {
         String name = binding.etFullName.getText().toString().trim();
         String dob = binding.etDob.getText().toString().trim();
@@ -60,6 +69,7 @@ public class StudentFormActivity extends AppCompatActivity {
         String address = binding.etAddress.getText().toString().trim();
         Lop selectedLop = (Lop) binding.spinnerClass.getSelectedItem();
 
+        // Validate dữ liệu cơ bản
         if (name.isEmpty() || selectedLop == null) {
             Toast.makeText(this, "Vui lòng nhập tên và chọn lớp", Toast.LENGTH_SHORT).show();
             return;
@@ -75,12 +85,14 @@ public class StudentFormActivity extends AppCompatActivity {
         sv.setMaLop(selectedLop.getMaLop());
 
         if (maSV == -1) {
+            // Thêm mới
             long id = dbHelper.insertSinhVien(sv);
             if (id > 0) {
-                Toast.makeText(this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Thêm sinh viên thành công", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else {
+            // Cập nhật
             sv.setMaSV(maSV);
             int rows = dbHelper.updateSinhVien(sv);
             if (rows > 0) {

@@ -21,7 +21,7 @@
 
         <!-- Splash Screen -->
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".ui.activity.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.QLSV.Splash">
             <intent-filter>
@@ -31,34 +31,34 @@
         </activity>
 
         <!-- Login -->
-        <activity android:name=".ui.LoginActivity" android:exported="false" />
+        <activity android:name=".ui.activity.LoginActivity" android:exported="false" />
 
         <!-- Forgot Password -->
-        <activity android:name=".ui.ForgotPasswordActivity" android:exported="false" />
+        <activity android:name=".ui.activity.ForgotPasswordActivity" android:exported="false" />
 
         <!-- Main (Dashboard + Bottom Nav) -->
-        <activity android:name=".ui.MainActivity" android:exported="false" />
+        <activity android:name=".ui.activity.MainActivity" android:exported="false" />
 
         <!-- Student Detail -->
-        <activity android:name=".ui.StudentDetailActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentDetailActivity" android:exported="false" />
 
         <!-- Add/Edit Student -->
-        <activity android:name=".ui.StudentFormActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentFormActivity" android:exported="false" />
 
         <!-- Score Management -->
-        <activity android:name=".ui.ScoreActivity" android:exported="false" />
+        <activity android:name=".ui.activity.ScoreActivity" android:exported="false" />
 
         <!-- Attendance -->
-        <activity android:name=".ui.AttendanceActivity" android:exported="false" />
+        <activity android:name=".ui.activity.AttendanceActivity" android:exported="false" />
 
         <!-- Notification Detail -->
-        <activity android:name=".ui.NotificationDetailActivity" android:exported="false" />
+        <activity android:name=".ui.activity.NotificationDetailActivity" android:exported="false" />
 
         <!-- Profile / Change Password -->
-        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+        <activity android:name=".ui.activity.ProfileActivity" android:exported="false" />
 
         <!-- Subject Form -->
-        <activity android:name=".ui.SubjectFormActivity" android:exported="false" />
+        <activity android:name=".ui.activity.SubjectFormActivity" android:exported="false" />
 
         <!-- FileProvider for export -->
         <provider

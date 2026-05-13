@@ -1,23 +1,22 @@
 package com.example.qlsv_kthp.model;
 
 /**
- * Model Sinh viên
+ * Lớp đại diện cho đối tượng Sinh viên
  */
 public class SinhVien {
     private int maSV;
     private String hoTen;
-    private String ngaySinh; // dd/MM/yyyy
-    private String gioiTinh; // "Nam" / "Nữ"
+    private String ngaySinh;
+    private String gioiTinh;
     private String email;
     private String soDienThoai;
     private String diaChi;
     private int maLop;
-    private String tenLop; // join từ bảng LOP
+    private String tenLop; // Trường mở rộng để hiển thị tên lớp từ bảng LOP
 
     public SinhVien() {}
 
-    public SinhVien(int maSV, String hoTen, String ngaySinh, String gioiTinh,
-                    String email, String soDienThoai, String diaChi, int maLop) {
+    public SinhVien(int maSV, String hoTen, String ngaySinh, String gioiTinh, String email, String soDienThoai, String diaChi, int maLop) {
         this.maSV = maSV;
         this.hoTen = hoTen;
         this.ngaySinh = ngaySinh;
@@ -28,7 +27,13 @@ public class SinhVien {
         this.maLop = maLop;
     }
 
-    // Getters & Setters
+    // Lấy ký tự đầu của tên để làm avatar text
+    public String getInitial() {
+        if (hoTen == null || hoTen.isEmpty()) return "NA";
+        String[] parts = hoTen.split(" ");
+        return parts[parts.length - 1].substring(0, 1).toUpperCase();
+    }
+
     public int getMaSV() { return maSV; }
     public void setMaSV(int maSV) { this.maSV = maSV; }
 
@@ -55,11 +60,4 @@ public class SinhVien {
 
     public String getTenLop() { return tenLop; }
     public void setTenLop(String tenLop) { this.tenLop = tenLop; }
-
-    /** Lấy chữ cái đầu của tên để làm avatar */
-    public String getInitial() {
-        if (hoTen == null || hoTen.isEmpty()) return "?";
-        String[] parts = hoTen.trim().split("\\s+");
-        return parts[parts.length - 1].substring(0, 1).toUpperCase();
-    }
 }

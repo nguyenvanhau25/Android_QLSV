@@ -1,16 +1,16 @@
 package com.example.qlsv_kthp.model;
 
 /**
- * Model Tài khoản đăng nhập
+ * Lớp đại diện cho đối tượng Tài khoản người dùng
  */
 public class TaiKhoan {
     private int id;
     private String username;
-    private String password; // SHA-256 hash
+    private String password;
     private String hoTen;
     private String email;
-    private String role; // "admin" hoặc "user"
-    private int maSV; // liên kết với sinh viên nếu role=user, -1 nếu admin
+    private String role; // 'admin' hoặc 'user'
+    private int maSV; // Nếu là sinh viên thì có mã SV, nếu là admin thì để -1
 
     public TaiKhoan() {}
 
@@ -24,7 +24,6 @@ public class TaiKhoan {
         this.maSV = maSV;
     }
 
-    // Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -45,6 +44,4 @@ public class TaiKhoan {
 
     public int getMaSV() { return maSV; }
     public void setMaSV(int maSV) { this.maSV = maSV; }
-
-    public boolean isAdmin() { return "admin".equalsIgnoreCase(role); }
 }
