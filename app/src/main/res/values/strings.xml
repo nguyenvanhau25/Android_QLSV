@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QLSV - Quản Lý Sinh Viên</string>
+
+    <!-- Login -->
+    <string name="login_title">Đăng Nhập</string>
+    <string name="login_subtitle">Hệ thống quản lý sinh viên</string>
+    <string name="hint_username">Tên đăng nhập</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="btn_login">ĐĂNG NHẬP</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="login_error">Sai tên đăng nhập hoặc mật khẩu</string>
+    <string name="login_empty">Vui lòng nhập đầy đủ thông tin</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard">Tổng quan</string>
+    <string name="total_students">Tổng sinh viên</string>
+    <string name="total_classes">Tổng lớp học</string>
+    <string name="total_subjects">Tổng môn học</string>
+    <string name="recent_activities">Hoạt động gần đây</string>
+
+    <!-- Students -->
+    <string name="student_list">Danh sách sinh viên</string>
+    <string name="add_student">Thêm sinh viên</string>
+    <string name="edit_student">Sửa sinh viên</string>
+    <string name="student_detail">Chi tiết sinh viên</string>
+    <string name="search_student">Tìm kiếm sinh viên…</string>
+    <string name="filter_by_class">Lọc theo lớp</string>
+    <string name="all_classes">Tất cả lớp</string>
+    <string name="student_id">Mã SV</string>
+    <string name="student_name">Họ và tên</string>
+    <string name="student_email">Email</string>
+    <string name="student_phone">Số điện thoại</string>
+    <string name="student_class">Lớp</string>
+    <string name="student_dob">Ngày sinh</string>
+    <string name="student_address">Địa chỉ</string>
+    <string name="student_gender">Giới tính</string>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+
+    <!-- Subjects -->
+    <string name="subject_list">Quản lý môn học</string>
+    <string name="add_subject">Thêm môn học</string>
+    <string name="edit_subject">Sửa môn học</string>
+    <string name="subject_id">Mã môn</string>
+    <string name="subject_name">Tên môn học</string>
+    <string name="subject_credits">Số tín chỉ</string>
+
+    <!-- Scores -->
+    <string name="score_management">Quản lý điểm</string>
+    <string name="gpa">Điểm GPA</string>
+    <string name="score_midterm">Giữa kỳ</string>
+    <string name="score_final">Cuối kỳ</string>
+    <string name="score_assignment">Bài tập</string>
+
+    <!-- Attendance -->
+    <string name="attendance">Điểm danh</string>
+    <string name="attendance_date">Ngày điểm danh</string>
+    <string name="status_present">Có mặt</string>
+    <string name="status_absent">Vắng mặt</string>
+    <string name="total_absent">Tổng buổi vắng</string>
+
+    <!-- Notifications -->
+    <string name="notifications">Thông báo</string>
+    <string name="no_notifications">Không có thông báo</string>
+    <string name="mark_read">Đánh dấu đã đọc</string>
+
+    <!-- General -->
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Sửa</string>
+    <string name="confirm_delete">Xác nhận xóa</string>
+    <string name="confirm_delete_message">Bạn có chắc chắn muốn xóa?</string>
+    <string name="success">Thành công</string>
+    <string name="error">Lỗi</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="export">Xuất file</string>
+    <string name="export_csv">Xuất CSV</string>
+    <string name="export_success">Xuất file thành công</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="profile">Hồ sơ cá nhân</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_password">Nhập lại mật khẩu mới</string>
+
+    <!-- Bottom Nav -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_students">Sinh viên</string>
+    <string name="nav_subjects">Môn học</string>
+    <string name="nav_notifications">Thông báo</string>
+    <string name="nav_more">Thêm</string>
+
+    <!-- Validation -->
+    <string name="error_required">Trường này không được để trống</string>
+    <string name="error_email">Email không hợp lệ</string>
+    <string name="error_phone">Số điện thoại không hợp lệ</string>
+    <string name="error_password_mismatch">Mật khẩu không khớp</string>
+    <string name="error_password_short">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="cannot_delete_subject">Không thể xóa môn học đã có dữ liệu điểm</string>
+    
+    <!-- Added for Layout Compatibility -->
+    <string name="xin_ch_o_c_u_ch">Xin chào, %1$s!</string>
+    <string name="stat_students">Sinh viên</string>
+    <string name="stat_classes">Lớp học</string>
+    <string name="stat_subjects">Môn học</string>
+    <string name="recent_activity">Hoạt động gần đây</string>
+    <string name="title_student_list">Danh sách sinh viên</string>
+    <string name="hint_search_student">Tìm kiếm sinh viên…</string>
+    <string name="cd_back">Quay lại</string>
+    <string name="btn_add_student">Thêm sinh viên</string>
+    <string name="nav_grades">Điểm số</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="title_student_detail">Chi tiết sinh viên</string>
+</resources>

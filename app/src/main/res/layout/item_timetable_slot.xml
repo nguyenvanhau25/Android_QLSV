@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="6dp">
+
+    <!-- Cột giờ -->
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:text="07:30"
+        android:textSize="11sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:gravity="end"
+        app:layout_constraintTop_toTopOf="@id/cardSlot"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/lineConnector"
+        android:layout_marginTop="12dp" />
+
+    <!-- Đường nối dọc -->
+    <View
+        android:id="@+id/lineConnector"
+        android:layout_width="1.5dp"
+        android:layout_height="0dp"
+        android:background="?attr/colorOutlineVariant"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvTime" />
+
+    <!-- Chấm tròn trên đường nối -->
+    <View
+        android:id="@+id/dotTime"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/circle_dot_primary"
+        app:layout_constraintTop_toTopOf="@id/cardSlot"
+        app:layout_constraintBottom_toTopOf="@id/cardSlot"
+        app:layout_constraintStart_toStartOf="@id/lineConnector"
+        app:layout_constraintEnd_toEndOf="@id/lineConnector"
+        android:layout_marginTop="16dp" />
+
+    <!-- Card môn học -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSlot"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:strokeWidth="0dp"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="6dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/lineConnector"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Thanh màu trái -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/tvSubjectName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Lập trình OOP"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvRoom" />
+
+            <TextView
+                android:id="@+id/tvRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="P.A101"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorSecondary"
+                android:background="@drawable/bg_room_chip"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTimeRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="07:30 – 09:30"
+                android:textSize="12sp"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:alpha="0.75"
+                android:layout_marginTop="3dp"
+                app:layout_constraintTop_toBottomOf="@id/tvSubjectName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvTeacher" />
+
+            <TextView
+                android:id="@+id/tvTeacher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GV: Lê Văn X"
+                android:textSize="11sp"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:alpha="0.7"
+                android:layout_marginTop="3dp"
+                app:layout_constraintTop_toBottomOf="@id/tvRoom"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/colorBar"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSecondary"
+        tools:layout_editor_absoluteX="70dp"
+        tools:layout_editor_absoluteY="10dp"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

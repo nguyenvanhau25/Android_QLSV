@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:strokeWidth="0dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp">
+
+        <!-- Thanh màu trạng thái (trái) -->
+        <View
+            android:id="@+id/statusBar"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/score_pass"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Tên môn học -->
+        <TextView
+            android:id="@+id/tvSubjectName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Toán rời rạc"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:layout_marginStart="12dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/statusBar"
+            app:layout_constraintEnd_toStartOf="@id/tvFinalScore"
+            app:layout_constraintBottom_toTopOf="@id/tvScoreBreakdown" />
+
+        <!-- Mã môn / số tín chỉ -->
+        <TextView
+            android:id="@+id/tvSubjectMeta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="CS101 · 3 tín chỉ"
+            android:textSize="11sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSubjectName"
+            app:layout_constraintStart_toEndOf="@id/statusBar"
+            app:layout_constraintEnd_toStartOf="@id/tvFinalScore" />
+
+        <!-- Điểm thành phần -->
+        <TextView
+            android:id="@+id/tvScoreBreakdown"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="CC: 10 · GK: 7.5 · CK: 8.0"
+            android:textSize="11sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:alpha="0.85"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSubjectMeta"
+            app:layout_constraintStart_toEndOf="@id/statusBar"
+            app:layout_constraintEnd_toStartOf="@id/tvFinalScore"
+            app:layout_constraintBottom_toTopOf="@id/progressScore" />
+
+        <!-- Thanh điểm -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressScore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progress="85"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            app:trackCornerRadius="4dp"
+            app:trackThickness="5dp"
+            app:indicatorColor="@color/score_pass"
+            app:trackColor="?attr/colorSurfaceVariant"
+            app:layout_constraintTop_toBottomOf="@id/tvScoreBreakdown"
+            app:layout_constraintStart_toEndOf="@id/statusBar"
+            app:layout_constraintEnd_toStartOf="@id/tvFinalScore"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Điểm tổng kết (to, bên phải) -->
+        <TextView
+            android:id="@+id/tvFinalScore"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="8.5"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/score_pass"
+            android:gravity="center"
+            android:background="@drawable/bg_score_circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

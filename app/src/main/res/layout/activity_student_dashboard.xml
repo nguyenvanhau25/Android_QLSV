@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <!-- AppBar cuộn ẩn khi scroll -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryContainer"
+        app:liftOnScroll="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:paddingHorizontal="16dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/colorPrimary"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvAvatarInitials"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="NA"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnPrimary"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Xin chào, Nguyễn An!"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:layout_marginStart="12dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tvStudentId"
+                app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                app:layout_constraintEnd_toStartOf="@id/ivNotif" />
+
+            <TextView
+                android:id="@+id/tvStudentId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="SV001 · Lớp CS01"
+                android:textSize="12sp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:alpha="0.75"
+                android:layout_marginStart="12dp"
+                app:layout_constraintTop_toBottomOf="@id/tvGreeting"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                app:layout_constraintEnd_toStartOf="@id/ivNotif" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ivNotif"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                style="@style/Widget.Material3.Button.IconButton"
+                app:icon="@drawable/ic_notifications"
+                app:iconTint="?attr/colorOnPrimaryContainer"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Nội dung cuộn -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:overScrollMode="never">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Cảnh báo học vụ (hiện khi có cảnh báo) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardWarning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="?attr/colorErrorContainer"
+                app:strokeWidth="0dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:id="@+id/tvWarningTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cảnh báo học vụ"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnErrorContainer"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvWarningBody"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Điểm Tiếng Anh dưới 5.0. Liên hệ giảng viên để được hỗ trợ."
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnErrorContainer"
+                        android:alpha="0.85"
+                        android:layout_marginTop="3dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvWarningTitle"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Thẻ GPA + thống kê nhanh -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardGpa"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:strokeWidth="0dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/cardWarning"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvGpaLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GPA tích lũy"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:alpha="0.75"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvGpaValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3.40"
+                        android:textSize="36sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:layout_marginTop="2dp"
+                        app:layout_constraintTop_toBottomOf="@id/tvGpaLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tvGpaScale" />
+
+                    <TextView
+                        android:id="@+id/tvGpaScale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/ 4.0"
+                        android:textSize="13sp"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:alpha="0.6"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <!-- 3 stat nhỏ bên phải -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layoutMiniStats"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <TextView
+                            android:id="@+id/tvCreditsDone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="72"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/lblCredits"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tín chỉ tích lũy"
+                            android:textSize="10sp"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:alpha="0.7"
+                            android:layout_marginTop="1dp"
+                            app:layout_constraintTop_toBottomOf="@id/tvCreditsDone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/tvSubjectCount" />
+
+                        <TextView
+                            android:id="@+id/tvSubjectCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5 môn học kỳ này"
+                            android:textSize="11sp"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:alpha="0.85"
+                            android:layout_marginTop="12dp"
+                            app:layout_constraintTop_toBottomOf="@id/lblCredits"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- TKB hôm nay -->
+            <TextView
+                android:id="@+id/tvTodayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HÔM NAY"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/cardGpa"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTodaySchedule"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/tvTodayLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Thông báo gần đây -->
+            <TextView
+                android:id="@+id/tvNotifLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="THÔNG BÁO MỚI"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/rvTodaySchedule"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSeeAllNotif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xem tất cả"
+                android:textSize="12sp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_marginTop="14dp"
+                app:layout_constraintTop_toBottomOf="@id/rvTodaySchedule"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvNotifications"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/tvNotifLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="16dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

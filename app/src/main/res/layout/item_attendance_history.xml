@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item: Một buổi điểm danh trong lịch sử
+     Quyền: SINH VIÊN -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp">
+
+    <!-- Badge trạng thái -->
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Có mặt"
+        android:checkable="false"
+        android:textSize="11sp"
+        style="@style/Widget.Material3.Chip.Assist"
+        app:chipBackgroundColor="@color/score_pass_bg"
+        android:textColor="@color/score_pass"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Ngày học -->
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thứ 2, 14/04/2026"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginStart="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chipStatus"
+        app:layout_constraintBottom_toTopOf="@id/tvSession" />
+
+    <TextView
+        android:id="@+id/tvSession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tiết 1-2 · 07:30 – 09:30"
+        android:textSize="11sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@id/tvDate"
+        app:layout_constraintStart_toEndOf="@id/chipStatus"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Ghi chú (nếu có) -->
+    <TextView
+        android:id="@+id/tvNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Có phép"
+        android:textSize="11sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:alpha="0.7"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:background="?attr/colorOutlineVariant"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

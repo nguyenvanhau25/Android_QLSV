@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Quyền ghi file vào bộ nhớ -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.QLSV"
+        tools:targetApi="31">
+
+        <!-- Splash Screen -->
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.QLSV.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Login -->
+        <activity android:name=".ui.LoginActivity" android:exported="false" />
+
+        <!-- Forgot Password -->
+        <activity android:name=".ui.ForgotPasswordActivity" android:exported="false" />
+
+        <!-- Main (Dashboard + Bottom Nav) -->
+        <activity android:name=".ui.MainActivity" android:exported="false" />
+
+        <!-- Student Detail -->
+        <activity android:name=".ui.StudentDetailActivity" android:exported="false" />
+
+        <!-- Add/Edit Student -->
+        <activity android:name=".ui.StudentFormActivity" android:exported="false" />
+
+        <!-- Score Management -->
+        <activity android:name=".ui.ScoreActivity" android:exported="false" />
+
+        <!-- Attendance -->
+        <activity android:name=".ui.AttendanceActivity" android:exported="false" />
+
+        <!-- Notification Detail -->
+        <activity android:name=".ui.NotificationDetailActivity" android:exported="false" />
+
+        <!-- Profile / Change Password -->
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+
+        <!-- Subject Form -->
+        <activity android:name=".ui.SubjectFormActivity" android:exported="false" />
+
+        <!-- FileProvider for export -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+
+</manifest>

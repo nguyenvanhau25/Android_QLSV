@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Premium Color Palette -->
+    <color name="bg_main">#F8FAFC</color>
+    <color name="surface_main">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_tertiary">#94A3B8</color>
+
+    <color name="blue_primary">#2563EB</color>
+    <color name="blue_light">#DBEAFE</color>
+    <color name="blue_dark">#1E40AF</color>
+    <color name="blue_gradient_start">#3B82F6</color>
+    <color name="blue_gradient_end">#1D4ED8</color>
+
+    <color name="teal_primary">#0D9488</color>
+    <color name="teal_light">#CCFBF1</color>
+
+    <color name="amber_primary">#D97706</color>
+    <color name="amber_light">#FEF3C7</color>
+
+    <color name="red_primary">#E11D48</color>
+    <color name="red_light">#FFE4E6</color>
+
+    <color name="green_primary">#16A34A</color>
+    <color name="green_light">#DCFCE7</color>
+
+    <color name="purple_primary">#7C3AED</color>
+    <color name="purple_light">#EDE9FE</color>
+
+    <color name="indigo_primary">#4F46E5</color>
+    <color name="indigo_light">#E0E7FF</color>
+
+    <color name="score_pass">#16A34A</color>
+    <color name="score_pass_bg">#DCFCE7</color>
+    <color name="score_warn">#D97706</color>
+    <color name="score_warn_bg">#FEF3C7</color>
+    <color name="score_fail">#E11D48</color>
+    <color name="score_fail_bg">#FFE4E6</color>
+
+    <color name="border_color">#E2E8F0</color>
+    <color name="border_light">#F1F5F9</color>
+    <color name="divider">#E2E8F0</color>
+
+    <color name="attendance_present">#16A34A</color>
+    <color name="attendance_absent">#E11D48</color>
+    <color name="attendance_present_bg">#DCFCE7</color>
+    <color name="attendance_absent_bg">#FFE4E6</color>
+
+    <!-- Material 3 Mappings -->
+    <color name="md_theme_primary">@color/blue_primary</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">@color/blue_light</color>
+    <color name="md_theme_onPrimaryContainer">@color/blue_dark</color>
+    <color name="md_theme_secondary">@color/teal_primary</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">@color/teal_light</color>
+    <color name="md_theme_onSecondaryContainer">#134E4A</color>
+    <color name="md_theme_tertiary">@color/amber_primary</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">@color/amber_light</color>
+    <color name="md_theme_onTertiaryContainer">#78350F</color>
+    <color name="md_theme_error">@color/red_primary</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_errorContainer">@color/red_light</color>
+    <color name="md_theme_onErrorContainer">#881337</color>
+    <color name="md_theme_surface">@color/surface_main</color>
+    <color name="md_theme_onSurface">@color/text_primary</color>
+    <color name="md_theme_surfaceVariant">@color/border_light</color>
+    <color name="md_theme_onSurfaceVariant">@color/text_secondary</color>
+    <color name="md_theme_background">@color/bg_main</color>
+    <color name="md_theme_onBackground">@color/text_primary</color>
+    <color name="md_theme_outline">@color/border_color</color>
+    <color name="md_theme_outlineVariant">#CBD5E1</color>
+</resources>
