@@ -10,6 +10,7 @@ import com.example.qlsv_kthp.databinding.ActivityStudentFormBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
 import com.example.qlsv_kthp.model.Lop;
 import com.example.qlsv_kthp.model.SinhVien;
+import com.example.qlsv_kthp.util.RoleAccessManager;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ public class StudentFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!RoleAccessManager.requireAdmin(this)) {
+            return;
+        }
         binding = ActivityStudentFormBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -37,7 +41,7 @@ public class StudentFormActivity extends AppCompatActivity {
         if (getIntent().hasExtra("maSV")) {
             maSV = getIntent().getIntExtra("maSV", -1);
             binding.tvTitle.setText("Sửa sinh viên");
-            // Trong thực tế sẽ cần load thông tin SV cũ lên form ở đây
+            loadStudentDataToForm();
         }
 
         binding.btnBack.setOnClickListener(v -> finish());
@@ -45,6 +49,34 @@ public class StudentFormActivity extends AppCompatActivity {
         binding.btnSave.setOnClickListener(v -> {
             saveStudent();
         });
+    }
+
+    /**
+     * Load dữ liệu sinh viên cũ lên form để chỉnh sửa
+     */
+    private void loadStudentDataToForm() {
+        SinhVien sv = dbHelper.getSinhVienById(maSV);
+        if (sv != null) {
+            binding.etFullName.setText(sv.getHoTen());
+            binding.etDob.setText(sv.getNgaySinh());
+            if ("Nam".equals(sv.getGioiTinh())) {
+                binding.rbMale.setChecked(true);
+            } else {
+                binding.rbFemale.setChecked(true);
+            }
+            binding.etEmail.setText(sv.getEmail());
+            binding.etPhone.setText(sv.getSoDienThoai());
+            binding.etAddress.setText(sv.getDiaChi());
+            
+            // Chọn lớp tương ứng trong Spinner
+            List<Lop> classes = dbHelper.getAllLop();
+            for (int i = 0; i < classes.size(); i++) {
+                if (classes.get(i).getMaLop() == sv.getMaLop()) {
+                    binding.spinnerClass.setSelection(i);
+                    break;
+                }
+            }
+        }
     }
 
     /**

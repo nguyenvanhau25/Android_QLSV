@@ -113,4 +113,47 @@
     <string name="nav_grades">Điểm số</string>
     <string name="nav_settings">Cài đặt</string>
     <string name="title_student_detail">Chi tiết sinh viên</string>
+
+
+    <!-- ── Thiếu trong item_score.xml ── -->
+    <string name="label_credits">%1$d tín chỉ</string>
+
+    <!-- ── Thiếu trong activity_score.xml ── -->
+    <string name="title_scores">Bảng điểm</string>
+
+    <!-- ── Thiếu trong activity_attendance.xml ── -->
+    <string name="nav_attendance">Điểm danh</string>
+
+    <!-- ── Thiếu trong activity_student_list.xml / StudentFormActivity ── -->
+    <string name="confirm_delete_student">Xóa sinh viên này sẽ xóa tất cả điểm và điểm danh liên quan. Tiếp tục?</string>
+
+    <!-- ── Thiếu cho SubjectFragment / SubjectFormActivity ── -->
+    <string name="subject_form_title_add">Thêm môn học</string>
+    <string name="subject_form_title_edit">Sửa môn học</string>
+    <string name="delete_subject_success">Đã xóa môn học</string>
+
+    <!-- ── Thiếu cho ChangePassword ── -->
+    <string name="title_change_password">Đổi mật khẩu</string>
+    <string name="error_wrong_old_password">Mật khẩu cũ không đúng</string>
+    <string name="change_password_success">Đổi mật khẩu thành công</string>
+
+    <!-- ── Thiếu cho NotificationFragment ── -->
+    <string name="mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="notification_empty">Không có thông báo nào</string>
+
+    <!-- ── Thiếu cho màn hình điểm danh ── -->
+    <string name="attendance_saved">Đã lưu điểm danh</string>
+    <string name="toggle_status_hint">Nhấn để đổi trạng thái</string>
+
+    <!-- ── Thiếu cho export ── -->
+    <string name="export_failed">Xuất file thất bại</string>
+
+    <!-- ── Thiếu cho ScoreActivity / DashboardFragment ── -->
+    <string name="semester_label">Học kỳ %1$s</string>
+    <string name="gpa_label">GPA: %.2f</string>
+
+    <!-- ── Thiếu cho dialog xóa ── -->
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+
 </resources>

@@ -2,21 +2,17 @@ package com.example.qlsv_kthp.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.qlsv_kthp.R;
+import com.example.qlsv_kthp.MainActivity;
 import com.example.qlsv_kthp.databinding.ActivityLoginBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
 import com.example.qlsv_kthp.model.TaiKhoan;
 import com.example.qlsv_kthp.util.SecurityUtils;
 import com.example.qlsv_kthp.util.SessionManager;
 
-/**
- * Màn hình Đăng nhập - Xử lý xác thực người dùng
- */
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
@@ -26,38 +22,39 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Sử dụng ViewBinding để quản lý layout
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         dbHelper = new DatabaseHelper(this);
         session = new SessionManager(this);
 
-        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String user = binding.etUsername.getText().toString().trim();
-                String pass = binding.etPassword.getText().toString().trim();
+        binding.btnLogin.setOnClickListener(v -> login());
+        binding.tvForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(this, ForgotPasswordActivity.class)));
+        binding.tvRegister.setOnClickListener(v ->
+                startActivity(new Intent(this, RegisterActivity.class)));
 
-                // Kiểm tra dữ liệu đầu vào
-                if (user.isEmpty() || pass.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+    }
 
-                // Mã hóa mật khẩu trước khi kiểm tra trong database
-                String hashedPass = SecurityUtils.sha256(pass);
-                TaiKhoan account = dbHelper.checkLogin(user, hashedPass);
-                
-                if (account != null) {
-                    // Lưu phiên đăng nhập và chuyển sang màn hình chính
-                    session.createLoginSession(account);
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    private void login() {
+        String user = binding.etUsername.getText() != null
+                ? binding.etUsername.getText().toString().trim() : "";
+        String pass = binding.etPassword.getText() != null
+                ? binding.etPassword.getText().toString().trim() : "";
+
+        if (user.isEmpty() || pass.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        TaiKhoan account = dbHelper.checkLogin(user, SecurityUtils.sha256(pass));
+        if (account == null) {
+            Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        session.createLoginSession(account);
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }
