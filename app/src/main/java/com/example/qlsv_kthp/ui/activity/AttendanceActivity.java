@@ -1,6 +1,5 @@
 package com.example.qlsv_kthp.ui.activity;
 
-import static android.content.Intent.getIntent;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -64,11 +63,7 @@ public class AttendanceActivity extends AppCompatActivity {
     }
 
     private void loadSummary() {
-        // Lấy danh sách điểm danh của môn học này (tất cả ngày)
-        // Đếm số buổi có mặt / vắng toàn lớp
-        // Ở đây ta dùng số liệu thực từ DB nếu muốn mở rộng
-        binding.tvPresentCount.setText("—");
-        binding.tvAbsentCount.setText("—");
+        updateSummaryCount();
     }
 
     /**

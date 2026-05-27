@@ -13,6 +13,7 @@ public class SessionManager {
     private static final String KEY_FULLNAME = "fullName";
     private static final String KEY_ROLE = "role";
     private static final String KEY_MASV = "maSV";
+    private static final String KEY_AVATAR = "avatarPath";
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
@@ -59,6 +60,15 @@ public class SessionManager {
 
     public int getMaSV() {
         return pref.getInt(KEY_MASV, -1);
+    }
+
+    public void setAvatarPath(String path) {
+        editor.putString(KEY_AVATAR, path);
+        editor.apply();
+    }
+
+    public String getAvatarPath() {
+        return pref.getString(KEY_AVATAR, "");
     }
 
     public boolean isAdmin() {

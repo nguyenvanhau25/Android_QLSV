@@ -48,6 +48,24 @@ public class DashboardFragment extends Fragment {
             binding.tvStatStudents.setText(String.valueOf(students));
             binding.tvStatClasses.setText(String.valueOf(classes));
             binding.tvStatSubjects.setText(String.valueOf(subjects));
+            
+            // Navigate via BottomNavigationView on MainActivity
+            View.OnClickListener clickListener = v -> {
+                if (getActivity() != null) {
+                    com.google.android.material.bottomnavigation.BottomNavigationView nav = 
+                            getActivity().findViewById(R.id.bottom_navigation);
+                    if (nav != null) {
+                        if (v.getId() == R.id.tvStatStudents || ((ViewGroup)v.getParent()).getId() == R.id.tvStatStudents) {
+                            nav.setSelectedItemId(R.id.nav_students);
+                        } else if (v.getId() == R.id.tvStatSubjects || ((ViewGroup)v.getParent()).getId() == R.id.tvStatSubjects) {
+                            nav.setSelectedItemId(R.id.nav_subjects);
+                        }
+                    }
+                }
+            };
+            
+            binding.tvStatStudents.setOnClickListener(clickListener);
+            binding.tvStatSubjects.setOnClickListener(clickListener);
             return;
         }
 

@@ -50,16 +50,29 @@ public class SubjectFragment extends Fragment {
     }
 
     private void loadSubjects() {
-        List<MonHoc> subjects = dbHelper.getAllMonHoc();
+        List<MonHoc> subjects;
+        if (session.isAdmin()) {
+            subjects = dbHelper.getAllMonHoc();
+        } else {
+            subjects = dbHelper.getRegisteredSubjects(session.getMaSV());
+            if (subjects.isEmpty()) {
+                Toast.makeText(getContext(), "Bạn chưa đăng ký môn học nào", Toast.LENGTH_SHORT).show();
+            }
+        }
+        
         SubjectAdapter adapter = new SubjectAdapter(subjects, session.isAdmin(), new SubjectAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MonHoc mh) {
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Chi tiết môn học")
+                    .setMessage("Mã MH: " + mh.getMaMH() + "\nTên môn: " + mh.getTenMH() + "\nSố tín chỉ: " + mh.getSoTinChi() + "\nGiảng viên: " + mh.getGiangVien())
+                    .setPositiveButton("Đóng", null)
+                    .show();
             }
 
             @Override
             public void onDeleteClick(MonHoc mh) {
                 if (!session.isAdmin()) {
-                    Toast.makeText(getContext(), "Sinh viên không được phép xóa môn học", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
