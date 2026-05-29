@@ -139,6 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSampleData(db);
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 4) {
@@ -153,6 +154,124 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_LIEU);
             onCreate(db);
         }
+
+    private void insertSampleData(SQLiteDatabase db) {
+        long cnttK14 = insertClass(db, "CNTT K18", "2023-2027");
+        long cnttK15 = insertClass(db, "CNTT K19", "2024-2028");
+        long qtkdK15 = insertClass(db, "QTKD K20", "2025-2029");
+        long ktnnK16 = insertClass(db, "Ngon ngu Anh K19", "2024-2028");
+
+        long android = insertSubject(db, "Lap trinh Android", 3, "Le Van Giang");
+        long ctDl = insertSubject(db, "Cau truc du lieu", 4, "Nguyen Van B");
+        long csdl = insertSubject(db, "Co so du lieu", 3, "Tran Thi C");
+        long web = insertSubject(db, "Phat trien Web", 3, "Pham Van D");
+        long mang = insertSubject(db, "Mang may tinh", 3, "Hoang Thi E");
+        long xstk = insertSubject(db, "Xac suat thong ke", 2, "Vu Van F");
+
+        long sv1 = insertStudent(db, "Nguyen Minh Anh", "12/03/2003", "Nu",
+                "minhanh@sv.edu.vn", "0901234567", "Thu Duc, TP.HCM", (int) cnttK14);
+        long sv2 = insertStudent(db, "Tran Quoc Bao", "28/08/2002", "Nam",
+                "quocbao@sv.edu.vn", "0912345678", "Di An, Binh Duong", (int) cnttK14);
+        long sv3 = insertStudent(db, "Le Hoang Nam", "15/11/2003", "Nam",
+                "hoangnam@sv.edu.vn", "0983123456", "Bien Hoa, Dong Nai", (int) cnttK15);
+        long sv4 = insertStudent(db, "Pham Thu Trang", "04/02/2004", "Nu",
+                "thutrang@sv.edu.vn", "0977123456", "Go Vap, TP.HCM", (int) cnttK15);
+        long sv5 = insertStudent(db, "Vo Gia Huy", "20/07/2003", "Nam",
+                "giahuy@sv.edu.vn", "0938456123", "Tan Binh, TP.HCM", (int) qtkdK15);
+        long sv6 = insertStudent(db, "Bui Khanh Linh", "09/09/2004", "Nu",
+                "khanhlinh@sv.edu.vn", "0967456123", "Nha Be, TP.HCM", (int) ktnnK16);
+
+        insertAccount(db, "admin", "admin123", "Quan tri vien", "admin@school.edu.vn", "admin", -1);
+        insertAccount(db, "sv001", "giangvien123", "Le Van Giang", "giangvien@school.edu.vn", "admin", -1);
+        insertAccount(db, "sv001", "sv123456", "Nguyen Minh Anh", "minhanh@sv.edu.vn", "student", (int) sv1);
+        insertAccount(db, "sv002", "sv123456", "Tran Quoc Bao", "quocbao@sv.edu.vn", "student", (int) sv2);
+        insertAccount(db, "sv003", "sv123456", "Le Hoang Nam", "hoangnam@sv.edu.vn", "student", (int) sv3);
+        insertAccount(db, "sv004", "sv123456", "Pham Thu Trang", "thutrang@sv.edu.vn", "student", (int) sv4);
+
+        insertScore(db, (int) sv1, (int) android, 8.0f, 8.5f, 9.0f, "HK1-2025");
+        insertScore(db, (int) sv1, (int) ctDl, 7.5f, 8.0f, 8.5f, "HK1-2025");
+        insertScore(db, (int) sv1, (int) csdl, 8.0f, 9.0f, 8.0f, "HK2-2025");
+        insertScore(db, (int) sv2, (int) android, 6.5f, 7.0f, 7.5f, "HK1-2025");
+        insertScore(db, (int) sv2, (int) web, 7.5f, 8.0f, 8.0f, "HK2-2025");
+        insertScore(db, (int) sv3, (int) csdl, 8.5f, 8.5f, 8.0f, "HK1-2025");
+        insertScore(db, (int) sv3, (int) mang, 7.0f, 7.5f, 7.0f, "HK2-2025");
+        insertScore(db, (int) sv4, (int) web, 9.0f, 9.0f, 8.5f, "HK1-2025");
+        insertScore(db, (int) sv5, (int) xstk, 7.0f, 8.0f, 7.5f, "HK1-2025");
+        insertScore(db, (int) sv6, (int) xstk, 8.5f, 8.0f, 8.5f, "HK2-2025");
+
+        insertAttendance(db, (int) sv1, (int) android, "2026-05-05", 1);
+        insertAttendance(db, (int) sv1, (int) android, "2026-05-12", 1);
+        insertAttendance(db, (int) sv2, (int) android, "2026-05-05", 0);
+        insertAttendance(db, (int) sv2, (int) android, "2026-05-12", 1);
+        insertAttendance(db, (int) sv3, (int) csdl, "2026-05-06", 1);
+        insertAttendance(db, (int) sv4, (int) web, "2026-05-07", 1);
+        insertAttendance(db, (int) sv5, (int) xstk, "2026-05-08", 0);
+        insertAttendance(db, (int) sv6, (int) xstk, "2026-05-09", 1);
+
+        insertNotification(db, "Thong bao lich hoc tuan 20",
+                "Tat ca cac lop hoc ca sang ngay thu 6 se chuyen sang phong B205 do bao tri toa nha A.",
+                "2026-05-14 08:30", 0, "general");
+        insertNotification(db, "Mo dang ky mon hoc he",
+                "Cong dang ky hoc phan he mo tu 08:00 ngay 16/05/2026 den 17:00 ngay 20/05/2026. Sinh vien vui long dang ky dung han.",
+                "2026-05-13 15:45", 0, "general");
+        insertNotification(db, "Cap nhat diem Android",
+                "Diem giua ky mon Lap trinh Android da duoc cap nhat. Sinh vien co the vao muc Diem so de kiem tra.",
+                "2026-05-12 10:15", 1, "score");
+        insertNotification(db, "Nhac nho hoc phi hoc ky 2",
+                "Han dong hoc phi hoc ky 2 nam hoc 2025-2026 la ngay 25/05/2026. Sau thoi han tren, he thong se tam khoa dang ky hoc phan.",
+                "2026-05-11 09:00", 0, "general");
+        insertNotification(db, "Canh bao vang hoc",
+                "Sinh vien vang qua 2 buoi o mon Lap trinh Android can lien he giang vien de bo sung bai tap va xac nhan chuyen can.",
+                "2026-05-10 18:20", 0, "attendance");
+
+        // Insert TKB & TaiLieu
+        insertTKB(db, (int) sv1, (int) android, 2, 1, 3, "P.A101", "Lê Văn Giang", "all");
+        insertTKB(db, (int) sv1, (int) ctDl, 4, 4, 6, "P.B202", "Nguyễn Văn B", "all");
+        insertTKB(db, (int) sv1, (int) csdl, 6, 7, 9, "P.C303", "Trần Thị C", "all");
+        
+        insertTaiLieu(db, (int) android, "Slide_Bai1_Android.pdf", "PDF", "2.5MB", "10/05/2026", "url");
+        insertTaiLieu(db, (int) android, "Video_HuongDan_CaiDat.mp4", "Video", "150MB", "12/05/2026", "url");
+    }
+
+    private long insertClass(SQLiteDatabase db, String tenLop, String khoaHoc) {
+        ContentValues values = new ContentValues();
+        values.put(COL_LOP_TEN, tenLop);
+        values.put(COL_LOP_KHOA, khoaHoc);
+        return db.insert(TABLE_LOP, null, values);
+    }
+
+    private long insertStudent(SQLiteDatabase db, String hoTen, String ngaySinh, String gioiTinh,
+                               String email, String soDienThoai, String diaChi, int maLop) {
+        ContentValues values = new ContentValues();
+        values.put(COL_SV_HOTEN, hoTen);
+        values.put(COL_SV_NGAYSINH, ngaySinh);
+        values.put(COL_SV_GIOITINH, gioiTinh);
+        values.put(COL_SV_EMAIL, email);
+        values.put(COL_SV_SDT, soDienThoai);
+        values.put(COL_SV_DIACHI, diaChi);
+        values.put(COL_SV_MALOP, maLop);
+        return db.insert(TABLE_SINH_VIEN, null, values);
+    }
+
+    private void insertAccount(SQLiteDatabase db, String username, String rawPassword, String hoTen,
+                               String email, String role, int maSV) {
+        ContentValues values = new ContentValues();
+        values.put(COL_TK_USERNAME, username);
+        values.put(COL_TK_PASSWORD, SecurityUtils.sha256(rawPassword));
+        values.put(COL_TK_HOTEN, hoTen);
+        values.put(COL_TK_EMAIL, email);
+        values.put(COL_TK_ROLE, role);
+        values.put(COL_TK_MASV, maSV);
+        db.insert(TABLE_TAI_KHOAN, null, values);
+    }
+
+    private long insertSubject(SQLiteDatabase db, String tenMH, int soTinChi, String giangVien) {
+        ContentValues values = new ContentValues();
+        values.put(COL_MH_TEN, tenMH);
+        values.put(COL_MH_TINCHI, soTinChi);
+        values.put(COL_MH_GV, giangVien);
+        return db.insert(TABLE_MON_HOC, null, values);
+
     }
 
     // --- MON HOC QUERIES ---
