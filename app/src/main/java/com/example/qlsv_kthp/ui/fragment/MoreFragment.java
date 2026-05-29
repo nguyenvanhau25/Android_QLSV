@@ -59,8 +59,38 @@ public class MoreFragment extends Fragment {
     private void setupActions() {
         binding.btnAccountInfo.setOnClickListener(v -> showAccountInfo());
         binding.btnChangePassword.setOnClickListener(v -> showChangePasswordDialog());
-        binding.btnCreateNotification.setOnClickListener(v ->
-                Toast.makeText(getContext(), "Chức năng quản trị sẽ được cấu hình ở phiên bản riêng cho admin", Toast.LENGTH_SHORT).show());
+        binding.btnCreateNotification.setOnClickListener(v -> {
+            LinearLayout layout = new LinearLayout(requireContext());
+            layout.setOrientation(LinearLayout.VERTICAL);
+            int padding = (int) (20 * requireContext().getResources().getDisplayMetrics().density);
+            layout.setPadding(padding, padding / 2, padding, 0);
+
+            TextInputEditText etTitle = new TextInputEditText(requireContext());
+            etTitle.setHint("Tiêu đề thông báo");
+            TextInputEditText etContent = new TextInputEditText(requireContext());
+            etContent.setHint("Nội dung");
+            
+            layout.addView(etTitle);
+            layout.addView(etContent);
+
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Tạo thông báo mới")
+                    .setView(layout)
+                    .setPositiveButton("Tạo", (dialog, which) -> {
+                        String title = textOf(etTitle);
+                        String content = textOf(etContent);
+                        if (title.isEmpty() || content.isEmpty()) {
+                            Toast.makeText(getContext(), "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
+                        com.example.qlsv_kthp.model.ThongBao tb = new com.example.qlsv_kthp.model.ThongBao(0, title, content, date, 0, "general");
+                        dbHelper.insertThongBao(tb);
+                        Toast.makeText(getContext(), "Tạo thông báo thành công", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
     }
 

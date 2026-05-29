@@ -26,7 +26,7 @@ public class ScoreActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private ScoreAdapter adapter;
     private int maSV;
-    private String hocKyCurrent = "HK1-2024";
+    private String hocKyCurrent = "HK1-2025";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -40,7 +40,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         configureNavigationForRole();
-        loadFragment(new DashboardFragment());
+        
+        if (session.isAdmin()) {
+            loadFragment(new DashboardFragment());
+        } else {
+            loadFragment(new com.example.qlsv_kthp.ui.fragment.StudentDashboardFragment());
+        }
 
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -49,11 +54,24 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_home) {
-                    fragment = new DashboardFragment();
+                    if (session.isAdmin()) {
+                        fragment = new DashboardFragment();
+                    } else {
+                        fragment = new com.example.qlsv_kthp.ui.fragment.StudentDashboardFragment();
+                    }
                 } else if (id == R.id.nav_students) {
-                    fragment = new StudentListFragment();
+                    if (session.isAdmin()) {
+                        fragment = new StudentListFragment();
+                    } else {
+                        fragment = new SubjectFragment(); // Shows registered subjects
+                    }
                 } else if (id == R.id.nav_subjects) {
-                    fragment = new SubjectFragment();
+                    if (session.isAdmin()) {
+                        fragment = new SubjectFragment();
+                    } else {
+                        startActivity(new Intent(MainActivity.this, com.example.qlsv_kthp.ui.activity.StudentSubjectRegisterActivity.class));
+                        return false; // Do not select the tab, just open activity
+                    }
                 } else if (id == R.id.nav_notifications) {
                     fragment = new NotificationFragment();
                 } else if (id == R.id.nav_more) {

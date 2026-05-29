@@ -94,9 +94,17 @@ public class RegisterActivity extends AppCompatActivity {
         taiKhoan.setEmail(email);
         taiKhoan.setRole("student");
 
-        long result = dbHelper.registerStudentAccount(taiKhoan, sinhVien);
+        long result = -1;
+        try {
+            result = dbHelper.registerStudentAccount(taiKhoan, sinhVien);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi hệ thống: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+        
         if (result <= 0) {
-            Toast.makeText(this, "Tạo tài khoản thất bại, vui lòng thử lại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Tạo tài khoản thất bại, vui lòng kiểm tra lại thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
 

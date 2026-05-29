@@ -63,6 +63,14 @@
         <!-- Subject Form -->
         <activity android:name=".ui.activity.SubjectFormActivity" android:exported="false" />
 
+        <!-- Student Area Activities -->
+        <activity android:name=".ui.activity.StudentDashboardActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentScoreActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentTimetableActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentAttendanceHistoryActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentSubjectRegisterActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentDocumentActivity" android:exported="false" />
+
         <!-- FileProvider for export -->
         <provider
             android:name="androidx.core.content.FileProvider"

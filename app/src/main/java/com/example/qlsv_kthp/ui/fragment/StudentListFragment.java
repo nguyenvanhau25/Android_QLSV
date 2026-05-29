@@ -9,11 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.google.android.material.chip.Chip;
 
 import com.example.qlsv_kthp.adapter.StudentAdapter;
 import com.example.qlsv_kthp.databinding.ActivityStudentListBinding;
@@ -33,6 +36,20 @@ public class StudentListFragment extends Fragment {
     private DatabaseHelper dbHelper;
     private List<SinhVien> allStudents = new ArrayList<>();
     private SessionManager session;
+    private ActivityResultLauncher<Intent> formLauncher;
+    
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        formLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == android.app.Activity.RESULT_OK) {
+                    loadStudents();
+                }
+            }
+        );
+    }
 
     @Nullable
     @Override
@@ -57,7 +74,7 @@ public class StudentListFragment extends Fragment {
                 Toast.makeText(getContext(), "Sinh viên không được phép thêm dữ liệu", Toast.LENGTH_SHORT).show();
                 return;
             }
-            startActivityForResult(new Intent(getActivity(), StudentFormActivity.class), 200);
+            formLauncher.launch(new Intent(getActivity(), StudentFormActivity.class));
         });
 
         binding.btnExport.setOnClickListener(v -> {
@@ -112,7 +129,7 @@ public class StudentListFragment extends Fragment {
         StudentAdapter adapter = new StudentAdapter(students, student -> {
             Intent intent = new Intent(getActivity(), StudentDetailActivity.class);
             intent.putExtra("maSV", student.getMaSV());
-            startActivityForResult(intent, 201);
+            formLauncher.launch(intent);
         });
         binding.rvStudents.setAdapter(adapter);
     }
@@ -164,14 +181,6 @@ public class StudentListFragment extends Fragment {
             });
         }
         FileUtils.exportToCSV(getContext(), "DanhSachSinhVien", data);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == android.app.Activity.RESULT_OK) {
-            loadStudents();
-        }
     }
 
     @Override

@@ -33,5 +33,7 @@ public class NotificationDetailActivity extends AppCompatActivity {
         tvTitle.setText(tieuDe != null ? tieuDe : "");
         tvDate.setText(ngayTao != null ? ngayTao : "");
         tvContent.setText(noiDung != null ? noiDung : "");
+
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 }

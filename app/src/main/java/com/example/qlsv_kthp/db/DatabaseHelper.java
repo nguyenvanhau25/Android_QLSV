@@ -24,7 +24,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "QLSV.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_TAI_KHOAN = "TAIKHOAN";
     public static final String TABLE_SINH_VIEN = "SINHVIEN";
@@ -33,6 +33,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_DIEM = "DIEM";
     public static final String TABLE_DIEM_DANH = "DIEMDANH";
     public static final String TABLE_THONG_BAO = "THONGBAO";
+    public static final String TABLE_THOI_KHOA_BIEU = "THOIKHOABIEU";
+    public static final String TABLE_TAI_LIEU = "TAILIEU";
 
     public static final String COL_TK_ID = "id";
     public static final String COL_TK_USERNAME = "username";
@@ -58,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MH_ID = "maMH";
     public static final String COL_MH_TEN = "tenMH";
     public static final String COL_MH_TINCHI = "soTinChi";
+    public static final String COL_MH_GV = "giangVien";
 
     public static final String COL_DIEM_ID = "maDiem";
     public static final String COL_DIEM_MASV = "maSV";
@@ -101,6 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_MON_HOC + " (" +
                 COL_MH_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_MH_TEN + " TEXT NOT NULL, " +
+                COL_MH_GV + " TEXT, " +
                 COL_MH_TINCHI + " INTEGER NOT NULL)");
 
         db.execSQL("CREATE TABLE " + TABLE_DIEM + " (" +
@@ -131,6 +135,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "daDoc INTEGER DEFAULT 0, " +
                 "loai TEXT)");
 
+        db.execSQL("CREATE TABLE " + TABLE_THOI_KHOA_BIEU + " (" +
+                "maTKB INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "maSV INTEGER, maMH INTEGER, " +
+                "thu INTEGER, " +
+                "tietBatDau INTEGER, tietKetThuc INTEGER, " +
+                "phongHoc TEXT, tenGiangVien TEXT, " +
+                "tuan TEXT)");
+
+        db.execSQL("CREATE TABLE " + TABLE_TAI_LIEU + " (" +
+                "maTL INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "maMH INTEGER, tenFile TEXT, " +
+                "loaiFile TEXT, " +
+                "kichThuoc TEXT, ngayDang TEXT, " +
+                "urlOrPath TEXT)");
+
         insertSampleData(db);
     }
 
@@ -140,12 +159,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long qtkdK15 = insertClass(db, "QTKD K20", "2025-2029");
         long ktnnK16 = insertClass(db, "Ngon ngu Anh K19", "2024-2028");
 
-        long android = insertSubject(db, "Lap trinh Android", 3);
-        long ctDl = insertSubject(db, "Cau truc du lieu", 4);
-        long csdl = insertSubject(db, "Co so du lieu", 3);
-        long web = insertSubject(db, "Phat trien Web", 3);
-        long mang = insertSubject(db, "Mang may tinh", 3);
-        long xstk = insertSubject(db, "Xac suat thong ke", 2);
+        long android = insertSubject(db, "Lap trinh Android", 3, "Le Van Giang");
+        long ctDl = insertSubject(db, "Cau truc du lieu", 4, "Nguyen Van B");
+        long csdl = insertSubject(db, "Co so du lieu", 3, "Tran Thi C");
+        long web = insertSubject(db, "Phat trien Web", 3, "Pham Van D");
+        long mang = insertSubject(db, "Mang may tinh", 3, "Hoang Thi E");
+        long xstk = insertSubject(db, "Xac suat thong ke", 2, "Vu Van F");
 
         long sv1 = insertStudent(db, "Nguyen Minh Anh", "12/03/2003", "Nu",
                 "minhanh@sv.edu.vn", "0901234567", "Thu Duc, TP.HCM", (int) cnttK14);
@@ -167,16 +186,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertAccount(db, "sv003", "sv123456", "Le Hoang Nam", "hoangnam@sv.edu.vn", "student", (int) sv3);
         insertAccount(db, "sv004", "sv123456", "Pham Thu Trang", "thutrang@sv.edu.vn", "student", (int) sv4);
 
-        insertScore(db, (int) sv1, (int) android, 8.0f, 8.5f, 9.0f, "2025.1");
-        insertScore(db, (int) sv1, (int) ctDl, 7.5f, 8.0f, 8.5f, "2025.1");
-        insertScore(db, (int) sv1, (int) csdl, 8.0f, 9.0f, 8.0f, "2025.2");
-        insertScore(db, (int) sv2, (int) android, 6.5f, 7.0f, 7.5f, "2025.1");
-        insertScore(db, (int) sv2, (int) web, 7.5f, 8.0f, 8.0f, "2025.2");
-        insertScore(db, (int) sv3, (int) csdl, 8.5f, 8.5f, 8.0f, "2025.1");
-        insertScore(db, (int) sv3, (int) mang, 7.0f, 7.5f, 7.0f, "2025.2");
-        insertScore(db, (int) sv4, (int) web, 9.0f, 9.0f, 8.5f, "2025.1");
-        insertScore(db, (int) sv5, (int) xstk, 7.0f, 8.0f, 7.5f, "2025.1");
-        insertScore(db, (int) sv6, (int) xstk, 8.5f, 8.0f, 8.5f, "2025.2");
+        insertScore(db, (int) sv1, (int) android, 8.0f, 8.5f, 9.0f, "HK1-2025");
+        insertScore(db, (int) sv1, (int) ctDl, 7.5f, 8.0f, 8.5f, "HK1-2025");
+        insertScore(db, (int) sv1, (int) csdl, 8.0f, 9.0f, 8.0f, "HK2-2025");
+        insertScore(db, (int) sv2, (int) android, 6.5f, 7.0f, 7.5f, "HK1-2025");
+        insertScore(db, (int) sv2, (int) web, 7.5f, 8.0f, 8.0f, "HK2-2025");
+        insertScore(db, (int) sv3, (int) csdl, 8.5f, 8.5f, 8.0f, "HK1-2025");
+        insertScore(db, (int) sv3, (int) mang, 7.0f, 7.5f, 7.0f, "HK2-2025");
+        insertScore(db, (int) sv4, (int) web, 9.0f, 9.0f, 8.5f, "HK1-2025");
+        insertScore(db, (int) sv5, (int) xstk, 7.0f, 8.0f, 7.5f, "HK1-2025");
+        insertScore(db, (int) sv6, (int) xstk, 8.5f, 8.0f, 8.5f, "HK2-2025");
 
         insertAttendance(db, (int) sv1, (int) android, "2026-05-05", 1);
         insertAttendance(db, (int) sv1, (int) android, "2026-05-12", 1);
@@ -202,6 +221,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertNotification(db, "Canh bao vang hoc",
                 "Sinh vien vang qua 2 buoi o mon Lap trinh Android can lien he giang vien de bo sung bai tap va xac nhan chuyen can.",
                 "2026-05-10 18:20", 0, "attendance");
+
+        // Insert TKB & TaiLieu
+        insertTKB(db, (int) sv1, (int) android, 2, 1, 3, "P.A101", "Lê Văn Giang", "all");
+        insertTKB(db, (int) sv1, (int) ctDl, 4, 4, 6, "P.B202", "Nguyễn Văn B", "all");
+        insertTKB(db, (int) sv1, (int) csdl, 6, 7, 9, "P.C303", "Trần Thị C", "all");
+        
+        insertTaiLieu(db, (int) android, "Slide_Bai1_Android.pdf", "PDF", "2.5MB", "10/05/2026", "url");
+        insertTaiLieu(db, (int) android, "Video_HuongDan_CaiDat.mp4", "Video", "150MB", "12/05/2026", "url");
     }
 
     private long insertClass(SQLiteDatabase db, String tenLop, String khoaHoc) {
@@ -236,10 +263,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_TAI_KHOAN, null, values);
     }
 
-    private long insertSubject(SQLiteDatabase db, String tenMH, int soTinChi) {
+    private long insertSubject(SQLiteDatabase db, String tenMH, int soTinChi, String giangVien) {
         ContentValues values = new ContentValues();
         values.put(COL_MH_TEN, tenMH);
         values.put(COL_MH_TINCHI, soTinChi);
+        values.put(COL_MH_GV, giangVien);
         return db.insert(TABLE_MON_HOC, null, values);
     }
 
@@ -274,6 +302,87 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_THONG_BAO, null, values);
     }
 
+    public List<com.example.qlsv_kthp.model.ThoiKhoaBieu> getTKBBySinhVienAndThu(int maSV, int thu) {
+        List<com.example.qlsv_kthp.model.ThoiKhoaBieu> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT t.*, m.tenMH FROM " + TABLE_THOI_KHOA_BIEU + " t " +
+                "JOIN " + TABLE_MON_HOC + " m ON t.maMH = m.maMH " +
+                "WHERE t.maSV = ? AND t.thu = ? ORDER BY t.tietBatDau ASC";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV), String.valueOf(thu)});
+        if (cursor.moveToFirst()) {
+            do {
+                com.example.qlsv_kthp.model.ThoiKhoaBieu tkb = new com.example.qlsv_kthp.model.ThoiKhoaBieu();
+                tkb.setMaTKB(cursor.getInt(cursor.getColumnIndexOrThrow("maTKB")));
+                tkb.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
+                tkb.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
+                tkb.setThu(cursor.getInt(cursor.getColumnIndexOrThrow("thu")));
+                tkb.setTietBatDau(cursor.getInt(cursor.getColumnIndexOrThrow("tietBatDau")));
+                tkb.setTietKetThuc(cursor.getInt(cursor.getColumnIndexOrThrow("tietKetThuc")));
+                tkb.setPhongHoc(cursor.getString(cursor.getColumnIndexOrThrow("phongHoc")));
+                tkb.setTenGiangVien(cursor.getString(cursor.getColumnIndexOrThrow("tenGiangVien")));
+                tkb.setTuan(cursor.getString(cursor.getColumnIndexOrThrow("tuan")));
+                tkb.setTenMH(cursor.getString(cursor.getColumnIndexOrThrow("tenMH")));
+                list.add(tkb);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public List<com.example.qlsv_kthp.model.TaiLieu> getTaiLieuByMonHoc(int maMH, String loaiFile) {
+        List<com.example.qlsv_kthp.model.TaiLieu> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query;
+        String[] args;
+        if (loaiFile == null || loaiFile.isEmpty() || loaiFile.equalsIgnoreCase("Tất cả")) {
+            query = "SELECT * FROM " + TABLE_TAI_LIEU + " WHERE maMH = ? ORDER BY ngayDang DESC";
+            args = new String[]{String.valueOf(maMH)};
+        } else {
+            query = "SELECT * FROM " + TABLE_TAI_LIEU + " WHERE maMH = ? AND loaiFile = ? ORDER BY ngayDang DESC";
+            args = new String[]{String.valueOf(maMH), loaiFile};
+        }
+        Cursor cursor = db.rawQuery(query, args);
+        if (cursor.moveToFirst()) {
+            do {
+                com.example.qlsv_kthp.model.TaiLieu tl = new com.example.qlsv_kthp.model.TaiLieu();
+                tl.setMaTL(cursor.getInt(cursor.getColumnIndexOrThrow("maTL")));
+                tl.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
+                tl.setTenFile(cursor.getString(cursor.getColumnIndexOrThrow("tenFile")));
+                tl.setLoaiFile(cursor.getString(cursor.getColumnIndexOrThrow("loaiFile")));
+                tl.setKichThuoc(cursor.getString(cursor.getColumnIndexOrThrow("kichThuoc")));
+                tl.setNgayDang(cursor.getString(cursor.getColumnIndexOrThrow("ngayDang")));
+                tl.setUrlOrPath(cursor.getString(cursor.getColumnIndexOrThrow("urlOrPath")));
+                list.add(tl);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    private void insertTKB(SQLiteDatabase db, int maSV, int maMH, int thu, int tietBatDau, int tietKetThuc, String phongHoc, String tenGiangVien, String tuan) {
+        ContentValues values = new ContentValues();
+        values.put("maSV", maSV);
+        values.put("maMH", maMH);
+        values.put("thu", thu);
+        values.put("tietBatDau", tietBatDau);
+        values.put("tietKetThuc", tietKetThuc);
+        values.put("phongHoc", phongHoc);
+        values.put("tenGiangVien", tenGiangVien);
+        values.put("tuan", tuan);
+        db.insert(TABLE_THOI_KHOA_BIEU, null, values);
+    }
+
+    private void insertTaiLieu(SQLiteDatabase db, int maMH, String tenFile, String loaiFile, String kichThuoc, String ngayDang, String urlOrPath) {
+        ContentValues values = new ContentValues();
+        values.put("maMH", maMH);
+        values.put("tenFile", tenFile);
+        values.put("loaiFile", loaiFile);
+        values.put("kichThuoc", kichThuoc);
+        values.put("ngayDang", ngayDang);
+        values.put("urlOrPath", urlOrPath);
+        db.insert(TABLE_TAI_LIEU, null, values);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_KHOAN);
@@ -283,6 +392,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM_DANH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_THONG_BAO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_THOI_KHOA_BIEU);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_LIEU);
         onCreate(db);
     }
 
@@ -559,7 +670,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 MonHoc mh = new MonHoc(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI))
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
+                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
                 );
                 list.add(mh);
             } while (cursor.moveToNext());
@@ -573,7 +685,78 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COL_MH_TEN, mh.getTenMH());
         values.put(COL_MH_TINCHI, mh.getSoTinChi());
+        values.put(COL_MH_GV, mh.getGiangVien());
         return db.insert(TABLE_MON_HOC, null, values);
+    }
+
+    public List<MonHoc> getRegisteredSubjects(int maSV) {
+        List<MonHoc> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT DISTINCT m.* FROM " + TABLE_MON_HOC + " m " +
+                "INNER JOIN " + TABLE_DIEM + " d ON m.maMH = d.maMH " +
+                "WHERE d.maSV = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
+        if (cursor.moveToFirst()) {
+            do {
+                MonHoc mh = new MonHoc(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
+                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
+                );
+                list.add(mh);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public int countStudentsInSubject(int maMH) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(DISTINCT maSV) FROM " + TABLE_DIEM + " WHERE maMH = ?",
+                new String[]{String.valueOf(maMH)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
+    public boolean isSubjectRegistered(int maSV, int maMH) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_DIEM + " WHERE maSV = ? AND maMH = ?",
+                new String[]{String.valueOf(maSV), String.valueOf(maMH)});
+        boolean registered = cursor.moveToFirst();
+        cursor.close();
+        return registered;
+    }
+
+    public void registerSubject(int maSV, int maMH) {
+        if (!isSubjectRegistered(maSV, maMH)) {
+            insertScore(this.getWritableDatabase(), maSV, maMH, 0, 0, 0, "HK1-2025");
+        }
+    }
+
+    public List<MonHoc> getUnregisteredSubjects(int maSV) {
+        List<MonHoc> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MON_HOC + " WHERE maMH NOT IN " +
+                "(SELECT maMH FROM " + TABLE_DIEM + " WHERE maSV = ?)";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
+        if (cursor.moveToFirst()) {
+            do {
+                MonHoc mh = new MonHoc(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
+                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
+                );
+                list.add(mh);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
     }
 
     public int updateMonHoc(MonHoc mh) {
@@ -581,6 +764,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COL_MH_TEN, mh.getTenMH());
         values.put(COL_MH_TINCHI, mh.getSoTinChi());
+        values.put(COL_MH_GV, mh.getGiangVien());
         return db.update(TABLE_MON_HOC, values, COL_MH_ID + "=?", new String[]{String.valueOf(mh.getMaMH())});
     }
 

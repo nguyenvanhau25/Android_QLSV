@@ -31,8 +31,40 @@ public class ProfileActivity extends AppCompatActivity {
         bindProfile();
 
         binding.btnAccountInfo.setOnClickListener(v -> showAccountInfo());
-        binding.btnChangePassword.setOnClickListener(v -> finish());
+        binding.btnChangePassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
         binding.btnCreateNotification.setVisibility(session.isAdmin() ? android.view.View.VISIBLE : android.view.View.GONE);
+        binding.btnCreateNotification.setOnClickListener(v -> {
+            android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+            layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+            int padding = (int) (20 * getResources().getDisplayMetrics().density);
+            layout.setPadding(padding, padding / 2, padding, 0);
+
+            com.google.android.material.textfield.TextInputEditText etTitle = new com.google.android.material.textfield.TextInputEditText(this);
+            etTitle.setHint("Tiêu đề thông báo");
+            com.google.android.material.textfield.TextInputEditText etContent = new com.google.android.material.textfield.TextInputEditText(this);
+            etContent.setHint("Nội dung");
+            
+            layout.addView(etTitle);
+            layout.addView(etContent);
+
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Tạo thông báo mới")
+                    .setView(layout)
+                    .setPositiveButton("Tạo", (dialog, which) -> {
+                        String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
+                        String content = etContent.getText() != null ? etContent.getText().toString().trim() : "";
+                        if (title.isEmpty() || content.isEmpty()) {
+                            android.widget.Toast.makeText(this, "Vui lòng nhập đầy đủ", android.widget.Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
+                        com.example.qlsv_kthp.model.ThongBao tb = new com.example.qlsv_kthp.model.ThongBao(0, title, content, date, 0, "general");
+                        dbHelper.insertThongBao(tb);
+                        android.widget.Toast.makeText(this, "Tạo thông báo thành công", android.widget.Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
         binding.btnDemoAccounts.setVisibility(android.view.View.GONE);
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
     }
