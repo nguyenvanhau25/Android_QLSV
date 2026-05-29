@@ -161,7 +161,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "khanhlinh@sv.edu.vn", "0967456123", "Nha Be, TP.HCM", (int) ktnnK16);
 
         insertAccount(db, "admin", "admin123", "Quan tri vien", "admin@school.edu.vn", "admin", -1);
-        insertAccount(db, "gv.cntt", "giangvien123", "Le Van Giang", "giangvien@school.edu.vn", "admin", -1);
+        insertAccount(db, "sv001", "giangvien123", "Le Van Giang", "giangvien@school.edu.vn", "admin", -1);
         insertAccount(db, "sv001", "sv123456", "Nguyen Minh Anh", "minhanh@sv.edu.vn", "student", (int) sv1);
         insertAccount(db, "sv002", "sv123456", "Tran Quoc Bao", "quocbao@sv.edu.vn", "student", (int) sv2);
         insertAccount(db, "sv003", "sv123456", "Le Hoang Nam", "hoangnam@sv.edu.vn", "student", (int) sv3);
