@@ -1,20 +1,22 @@
 package com.example.qlsv_kthp.ui.activity;
 
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qlsv_kthp.databinding.ActivityRegisterBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
-import com.example.qlsv_kthp.model.Lop;
 import com.example.qlsv_kthp.model.SinhVien;
 import com.example.qlsv_kthp.model.TaiKhoan;
 import com.example.qlsv_kthp.util.SecurityUtils;
 
-import java.util.List;
-
+/**
+ * Màn hình Đăng ký tài khoản - Senior Refactor
+ * Bao gồm Validation dữ liệu đầu vào và xử lý nghiệp vụ tạo tài khoản.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private ActivityRegisterBinding binding;
@@ -29,46 +31,44 @@ public class RegisterActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         binding.btnBack.setOnClickListener(v -> finish());
-        binding.btnRegister.setOnClickListener(v -> registerAccount());
-
-        loadClasses();
+        binding.btnRegister.setOnClickListener(v -> performRegistration());
     }
 
-    private void loadClasses() {
-        List<Lop> classes = dbHelper.getAllLop();
-        ArrayAdapter<Lop> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, classes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerClass.setAdapter(adapter);
-    }
+    private void performRegistration() {
+        String username = binding.etUsername.getText().toString().trim();
+        String fullName = binding.etFullName.getText().toString().trim();
+        String email = binding.etEmail.getText().toString().trim();
+        String phone = binding.etPhone.getText().toString().trim();
+        String password = binding.etPassword.getText().toString().trim();
+        String confirmPass = binding.etConfirmPassword.getText().toString().trim();
 
-    private void registerAccount() {
-        String fullName = textOf(binding.etFullName);
-        String username = textOf(binding.etUsername);
-        String email = textOf(binding.etEmail);
-        String phone = textOf(binding.etPhone);
-        String dob = textOf(binding.etDob);
-        String address = textOf(binding.etAddress);
-        String password = textOf(binding.etPassword);
-        String confirmPassword = textOf(binding.etConfirmPassword);
-        Lop selectedClass = (Lop) binding.spinnerClass.getSelectedItem();
-        String gender = binding.rbMale.isChecked() ? "Nam" : "Nu";
-
-        if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập các thông tin bắt buộc", Toast.LENGTH_SHORT).show();
+        // 1. Validation Logic (Task 5)
+        if (TextUtils.isEmpty(username) || username.length() < 4) {
+            binding.etUsername.setError("Tên đăng nhập ít nhất 4 ký tự");
             return;
         }
-        if (selectedClass == null) {
-            Toast.makeText(this, "Vui lòng chọn lớp", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(fullName)) {
+            binding.etFullName.setError("Vui lòng nhập họ tên");
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.etEmail.setError("Định dạng Email không hợp lệ");
+            return;
+        }
+        if (!phone.matches("(\\+84|0)\\d{9,10}")) {
+            binding.etPhone.setError("Số điện thoại không hợp lệ");
             return;
         }
         if (password.length() < 6) {
-            Toast.makeText(this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+            binding.etPassword.setError("Mật khẩu phải từ 6 ký tự");
             return;
         }
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+        if (!password.equals(confirmPass)) {
+            binding.etConfirmPassword.setError("Mật khẩu xác nhận không khớp");
             return;
         }
+
+        // 2. Check tồn tại
         if (dbHelper.isUsernameExists(username)) {
             Toast.makeText(this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
             return;
@@ -78,41 +78,27 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        SinhVien sinhVien = new SinhVien();
-        sinhVien.setHoTen(fullName);
-        sinhVien.setNgaySinh(dob);
-        sinhVien.setGioiTinh(gender);
-        sinhVien.setEmail(email);
-        sinhVien.setSoDienThoai(phone);
-        sinhVien.setDiaChi(address);
-        sinhVien.setMaLop(selectedClass.getMaLop());
+        // 3. Thực hiện đăng ký
+        TaiKhoan tk = new TaiKhoan();
+        tk.setUsername(username);
+        tk.setPassword(SecurityUtils.sha256(password)); // Hash password
+        tk.setHoTen(fullName);
+        tk.setEmail(email);
+        tk.setRole("student");
 
-        TaiKhoan taiKhoan = new TaiKhoan();
-        taiKhoan.setUsername(username);
-        taiKhoan.setPassword(SecurityUtils.sha256(password));
-        taiKhoan.setHoTen(fullName);
-        taiKhoan.setEmail(email);
-        taiKhoan.setRole("student");
+        SinhVien sv = new SinhVien();
+        sv.setHoTen(fullName);
+        sv.setEmail(email);
+        sv.setSoDienThoai(phone);
+        sv.setMaLop(1); // Mặc định lớp mẫu, SV sẽ cập nhật sau
 
-        long result = -1;
-        try {
-            result = dbHelper.registerStudentAccount(taiKhoan, sinhVien);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Lỗi hệ thống: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return;
+        long result = dbHelper.registerStudentAccount(tk, sv);
+
+        if (result != -1) {
+            Toast.makeText(this, "Đăng ký thành công! Hãy đăng nhập.", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            Toast.makeText(this, "Lỗi hệ thống khi đăng ký", Toast.LENGTH_SHORT).show();
         }
-        
-        if (result <= 0) {
-            Toast.makeText(this, "Tạo tài khoản thất bại, vui lòng kiểm tra lại thông tin", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Toast.makeText(this, "Đăng ký thành công, bạn có thể đăng nhập ngay", Toast.LENGTH_LONG).show();
-        finish();
-    }
-
-    private String textOf(com.google.android.material.textfield.TextInputEditText editText) {
-        return editText.getText() != null ? editText.getText().toString().trim() : "";
     }
 }

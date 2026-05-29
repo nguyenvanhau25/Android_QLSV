@@ -12,6 +12,8 @@ import com.example.qlsv_kthp.model.Lop;
 import com.example.qlsv_kthp.model.MonHoc;
 import com.example.qlsv_kthp.model.SinhVien;
 import com.example.qlsv_kthp.model.TaiKhoan;
+import com.example.qlsv_kthp.model.TaiLieu;
+import com.example.qlsv_kthp.model.ThoiKhoaBieu;
 import com.example.qlsv_kthp.model.ThongBao;
 import com.example.qlsv_kthp.util.SecurityUtils;
 
@@ -19,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lop ho tro quan ly co so du lieu SQLite cho he thong QLSV.
+ * Lớp hỗ trợ quản lý cơ sở dữ liệu SQLite - Refactored Version 4.1
+ * Tối ưu truy vấn và bổ sung các tính năng học vụ.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "QLSV.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String TABLE_TAI_KHOAN = "TAIKHOAN";
     public static final String TABLE_SINH_VIEN = "SINHVIEN";
@@ -36,39 +39,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_THOI_KHOA_BIEU = "THOIKHOABIEU";
     public static final String TABLE_TAI_LIEU = "TAILIEU";
 
-    public static final String COL_TK_ID = "id";
-    public static final String COL_TK_USERNAME = "username";
-    public static final String COL_TK_PASSWORD = "password";
-    public static final String COL_TK_HOTEN = "hoTen";
-    public static final String COL_TK_EMAIL = "email";
-    public static final String COL_TK_ROLE = "role";
-    public static final String COL_TK_MASV = "maSV";
-
-    public static final String COL_LOP_ID = "maLop";
-    public static final String COL_LOP_TEN = "tenLop";
-    public static final String COL_LOP_KHOA = "khoaHoc";
-
-    public static final String COL_SV_ID = "maSV";
-    public static final String COL_SV_HOTEN = "hoTen";
-    public static final String COL_SV_NGAYSINH = "ngaySinh";
-    public static final String COL_SV_GIOITINH = "gioiTinh";
-    public static final String COL_SV_EMAIL = "email";
-    public static final String COL_SV_SDT = "soDienThoai";
-    public static final String COL_SV_DIACHI = "diaChi";
-    public static final String COL_SV_MALOP = "maLop";
-
+    // Môn học Columns
     public static final String COL_MH_ID = "maMH";
     public static final String COL_MH_TEN = "tenMH";
     public static final String COL_MH_TINCHI = "soTinChi";
     public static final String COL_MH_GV = "giangVien";
-
-    public static final String COL_DIEM_ID = "maDiem";
-    public static final String COL_DIEM_MASV = "maSV";
-    public static final String COL_DIEM_MAMH = "maMH";
-    public static final String COL_DIEM_GK = "diemGiuaKy";
-    public static final String COL_DIEM_CK = "diemCuoiKy";
-    public static final String COL_DIEM_BT = "diemBaiTap";
-    public static final String COL_DIEM_HOCKY = "hocKy";
+    public static final String COL_MH_LICHHOC = "lichHoc";
+    public static final String COL_MH_TAILIEU = "taiLieu";
+    public static final String COL_MH_SOLUONGMAX = "soLuongMax";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -77,46 +55,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_LOP + " (" +
-                COL_LOP_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_LOP_TEN + " TEXT NOT NULL, " +
-                COL_LOP_KHOA + " TEXT)");
+                "maLop INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "tenLop TEXT NOT NULL, " +
+                "khoaHoc TEXT)");
 
         db.execSQL("CREATE TABLE " + TABLE_SINH_VIEN + " (" +
-                COL_SV_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_SV_HOTEN + " TEXT NOT NULL, " +
-                COL_SV_NGAYSINH + " TEXT, " +
-                COL_SV_GIOITINH + " TEXT, " +
-                COL_SV_EMAIL + " TEXT, " +
-                COL_SV_SDT + " TEXT, " +
-                COL_SV_DIACHI + " TEXT, " +
-                COL_SV_MALOP + " INTEGER, " +
-                "FOREIGN KEY(" + COL_SV_MALOP + ") REFERENCES " + TABLE_LOP + "(" + COL_LOP_ID + "))");
+                "maSV INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "hoTen TEXT NOT NULL, " +
+                "ngaySinh TEXT, " +
+                "gioiTinh TEXT, " +
+                "email TEXT, " +
+                "soDienThoai TEXT, " +
+                "diaChi TEXT, " +
+                "maLop INTEGER, " +
+                "FOREIGN KEY(maLop) REFERENCES LOP(maLop))");
 
         db.execSQL("CREATE TABLE " + TABLE_TAI_KHOAN + " (" +
-                COL_TK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_TK_USERNAME + " TEXT UNIQUE NOT NULL, " +
-                COL_TK_PASSWORD + " TEXT NOT NULL, " +
-                COL_TK_HOTEN + " TEXT NOT NULL, " +
-                COL_TK_EMAIL + " TEXT NOT NULL, " +
-                COL_TK_ROLE + " TEXT NOT NULL, " +
-                COL_TK_MASV + " INTEGER DEFAULT -1)");
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT UNIQUE NOT NULL, " +
+                "password TEXT NOT NULL, " +
+                "hoTen TEXT NOT NULL, " +
+                "email TEXT NOT NULL, " +
+                "role TEXT NOT NULL, " +
+                "maSV INTEGER DEFAULT -1)");
 
         db.execSQL("CREATE TABLE " + TABLE_MON_HOC + " (" +
                 COL_MH_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_MH_TEN + " TEXT NOT NULL, " +
                 COL_MH_GV + " TEXT, " +
-                COL_MH_TINCHI + " INTEGER NOT NULL)");
+                COL_MH_TINCHI + " INTEGER NOT NULL, " +
+                COL_MH_LICHHOC + " TEXT, " +
+                COL_MH_TAILIEU + " TEXT, " +
+                COL_MH_SOLUONGMAX + " INTEGER DEFAULT 65)");
 
         db.execSQL("CREATE TABLE " + TABLE_DIEM + " (" +
-                COL_DIEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_DIEM_MASV + " INTEGER, " +
-                COL_DIEM_MAMH + " INTEGER, " +
-                COL_DIEM_GK + " REAL, " +
-                COL_DIEM_CK + " REAL, " +
-                COL_DIEM_BT + " REAL, " +
-                COL_DIEM_HOCKY + " TEXT, " +
-                "FOREIGN KEY(" + COL_DIEM_MASV + ") REFERENCES " + TABLE_SINH_VIEN + "(" + COL_SV_ID + "), " +
-                "FOREIGN KEY(" + COL_DIEM_MAMH + ") REFERENCES " + TABLE_MON_HOC + "(" + COL_MH_ID + "))");
+                "maDiem INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "maSV INTEGER, " +
+                "maMH INTEGER, " +
+                "diemGiuaKy REAL, " +
+                "diemCuoiKy REAL, " +
+                "diemBaiTap REAL, " +
+                "hocKy TEXT, " +
+                "FOREIGN KEY(maSV) REFERENCES SINHVIEN(maSV), " +
+                "FOREIGN KEY(maMH) REFERENCES MONHOC(maMH))");
 
         db.execSQL("CREATE TABLE " + TABLE_DIEM_DANH + " (" +
                 "maDiemDanh INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -124,8 +105,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "maMH INTEGER, " +
                 "ngay TEXT, " +
                 "trangThai INTEGER, " +
-                "FOREIGN KEY(maSV) REFERENCES " + TABLE_SINH_VIEN + "(" + COL_SV_ID + "), " +
-                "FOREIGN KEY(maMH) REFERENCES " + TABLE_MON_HOC + "(" + COL_MH_ID + "))");
+                "FOREIGN KEY(maSV) REFERENCES SINHVIEN(maSV), " +
+                "FOREIGN KEY(maMH) REFERENCES MONHOC(maMH))");
 
         db.execSQL("CREATE TABLE " + TABLE_THONG_BAO + " (" +
                 "maThongBao INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -137,21 +118,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_THOI_KHOA_BIEU + " (" +
                 "maTKB INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "maSV INTEGER, maMH INTEGER, " +
+                "maSV INTEGER, " +
+                "maMH INTEGER, " +
                 "thu INTEGER, " +
-                "tietBatDau INTEGER, tietKetThuc INTEGER, " +
-                "phongHoc TEXT, tenGiangVien TEXT, " +
+                "tietBatDau INTEGER, " +
+                "tietKetThuc INTEGER, " +
+                "phongHoc TEXT, " +
+                "tenGiangVien TEXT, " +
                 "tuan TEXT)");
 
         db.execSQL("CREATE TABLE " + TABLE_TAI_LIEU + " (" +
                 "maTL INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "maMH INTEGER, tenFile TEXT, " +
+                "maMH INTEGER, " +
+                "tenFile TEXT, " +
                 "loaiFile TEXT, " +
-                "kichThuoc TEXT, ngayDang TEXT, " +
+                "kichThuoc TEXT, " +
+                "ngayDang TEXT, " +
                 "urlOrPath TEXT)");
 
         insertSampleData(db);
     }
+
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 4) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_KHOAN);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SINH_VIEN);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOP);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MON_HOC);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM_DANH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_THONG_BAO);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_THOI_KHOA_BIEU);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_LIEU);
+            onCreate(db);
+        }
 
     private void insertSampleData(SQLiteDatabase db) {
         long cnttK14 = insertClass(db, "CNTT K18", "2023-2027");
@@ -269,49 +271,966 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_MH_TINCHI, soTinChi);
         values.put(COL_MH_GV, giangVien);
         return db.insert(TABLE_MON_HOC, null, values);
+
     }
 
-    private void insertScore(SQLiteDatabase db, int maSV, int maMH, float gk, float ck, float bt, String hocKy) {
-        ContentValues values = new ContentValues();
-        values.put(COL_DIEM_MASV, maSV);
-        values.put(COL_DIEM_MAMH, maMH);
-        values.put(COL_DIEM_GK, gk);
-        values.put(COL_DIEM_CK, ck);
-        values.put(COL_DIEM_BT, bt);
-        values.put(COL_DIEM_HOCKY, hocKy);
-        db.insert(TABLE_DIEM, null, values);
+    // --- MON HOC QUERIES ---
+
+    public List<MonHoc> getAllMonHoc() {
+        List<MonHoc> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_MON_HOC,
+                null,
+                null,
+                null,
+                null,
+                null,
+                COL_MH_TEN + " ASC"
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(mapMonHoc(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
     }
 
-    private void insertAttendance(SQLiteDatabase db, int maSV, int maMH, String ngay, int trangThai) {
+    public MonHoc getMonHocById(int maMH) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_MON_HOC,
+                null,
+                COL_MH_ID + "=?",
+                new String[]{String.valueOf(maMH)},
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            MonHoc mh = mapMonHoc(cursor);
+            cursor.close();
+            return mh;
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return null;
+    }
+
+    private MonHoc mapMonHoc(Cursor cursor) {
+        MonHoc mh = new MonHoc();
+
+        mh.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)));
+        mh.setTenMH(cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)));
+        mh.setSoTinChi(cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)));
+        mh.setGiangVien(cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_GV)));
+        mh.setLichHoc(cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_LICHHOC)));
+        mh.setTaiLieu(cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TAILIEU)));
+        mh.setSoLuongMax(cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_SOLUONGMAX)));
+        mh.setSoLuongHienTai(countStudentsInSubject(mh.getMaMH()));
+
+        return mh;
+    }
+
+    public int countStudentsInSubject(int maMH) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(DISTINCT maSV) FROM " + TABLE_DIEM + " WHERE maMH = ?",
+                new String[]{String.valueOf(maMH)}
+        );
+
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+
+    public List<SinhVien> getSinhVienByMonHoc(int maMH) {
+        List<SinhVien> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
+                "JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop " +
+                "JOIN " + TABLE_DIEM + " d ON s.maSV = d.maSV " +
+                "WHERE d.maMH = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maMH)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(mapSinhVien(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public String registerSubject(int maSV, int maMH) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        if (isSubjectRegistered(maSV, maMH)) {
+            return "Môn học này đã được đăng ký!";
+        }
+
+        MonHoc mh = getMonHocById(maMH);
+
+        if (mh == null) {
+            return "Môn học không tồn tại!";
+        }
+
+        if (countStudentsInSubject(maMH) >= mh.getSoLuongMax()) {
+            return "Lớp đã đạt giới hạn tối đa " + mh.getSoLuongMax() + " SV!";
+        }
+
         ContentValues values = new ContentValues();
         values.put("maSV", maSV);
         values.put("maMH", maMH);
-        values.put("ngay", ngay);
-        values.put("trangThai", trangThai);
-        db.insert(TABLE_DIEM_DANH, null, values);
+        values.put("hocKy", "HK1-2025");
+        values.put("diemGiuaKy", 0);
+        values.put("diemCuoiKy", 0);
+        values.put("diemBaiTap", 0);
+
+        long result = db.insert(TABLE_DIEM, null, values);
+
+        return result != -1 ? "SUCCESS" : "Lỗi hệ thống khi đăng ký!";
     }
 
-    private void insertNotification(SQLiteDatabase db, String tieuDe, String noiDung,
-                                    String ngayTao, int daDoc, String loai) {
-        ContentValues values = new ContentValues();
-        values.put("tieuDe", tieuDe);
-        values.put("noiDung", noiDung);
-        values.put("ngayTao", ngayTao);
-        values.put("daDoc", daDoc);
-        values.put("loai", loai);
-        db.insert(TABLE_THONG_BAO, null, values);
-    }
-
-    public List<com.example.qlsv_kthp.model.ThoiKhoaBieu> getTKBBySinhVienAndThu(int maSV, int thu) {
-        List<com.example.qlsv_kthp.model.ThoiKhoaBieu> list = new ArrayList<>();
+    public boolean isSubjectRegistered(int maSV, int maMH) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT t.*, m.tenMH FROM " + TABLE_THOI_KHOA_BIEU + " t " +
-                "JOIN " + TABLE_MON_HOC + " m ON t.maMH = m.maMH " +
-                "WHERE t.maSV = ? AND t.thu = ? ORDER BY t.tietBatDau ASC";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV), String.valueOf(thu)});
+
+        Cursor cursor = db.rawQuery(
+                "SELECT 1 FROM " + TABLE_DIEM + " WHERE maSV = ? AND maMH = ?",
+                new String[]{String.valueOf(maSV), String.valueOf(maMH)}
+        );
+
+        boolean registered = cursor.moveToFirst();
+        cursor.close();
+
+        return registered;
+    }
+
+    // --- SINH VIEN QUERIES ---
+
+    public List<SinhVien> getAllSinhVien() {
+        List<SinhVien> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
+                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop " +
+                "ORDER BY s.hoTen ASC";
+
+        Cursor cursor = db.rawQuery(query, null);
+
         if (cursor.moveToFirst()) {
             do {
-                com.example.qlsv_kthp.model.ThoiKhoaBieu tkb = new com.example.qlsv_kthp.model.ThoiKhoaBieu();
+                list.add(mapSinhVien(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public List<Lop> getAllLop() {
+        List<Lop> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_LOP,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "tenLop ASC"
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                Lop lop = new Lop();
+
+                lop.setMaLop(cursor.getInt(cursor.getColumnIndexOrThrow("maLop")));
+                lop.setTenLop(cursor.getString(cursor.getColumnIndexOrThrow("tenLop")));
+                lop.setKhoaHoc(cursor.getString(cursor.getColumnIndexOrThrow("khoaHoc")));
+
+                list.add(lop);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public long insertSinhVien(SinhVien sv) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("hoTen", sv.getHoTen());
+        values.put("ngaySinh", sv.getNgaySinh());
+        values.put("gioiTinh", sv.getGioiTinh());
+        values.put("email", sv.getEmail());
+        values.put("soDienThoai", sv.getSoDienThoai());
+        values.put("diaChi", sv.getDiaChi());
+        values.put("maLop", sv.getMaLop());
+
+        return db.insert(TABLE_SINH_VIEN, null, values);
+    }
+
+    public int updateSinhVien(SinhVien sv) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("hoTen", sv.getHoTen());
+        values.put("ngaySinh", sv.getNgaySinh());
+        values.put("gioiTinh", sv.getGioiTinh());
+        values.put("email", sv.getEmail());
+        values.put("soDienThoai", sv.getSoDienThoai());
+        values.put("diaChi", sv.getDiaChi());
+        values.put("maLop", sv.getMaLop());
+
+        return db.update(
+                TABLE_SINH_VIEN,
+                values,
+                "maSV = ?",
+                new String[]{String.valueOf(sv.getMaSV())}
+        );
+    }
+
+    public List<SinhVien> searchSinhVien(String keyword) {
+        List<SinhVien> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String searchKey = "%" + keyword + "%";
+
+        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
+                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop " +
+                "WHERE s.hoTen LIKE ? " +
+                "OR s.email LIKE ? " +
+                "OR s.soDienThoai LIKE ? " +
+                "OR l.tenLop LIKE ? " +
+                "ORDER BY s.hoTen ASC";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{searchKey, searchKey, searchKey, searchKey}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(mapSinhVien(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+    public SinhVien getSinhVienById(int maSV) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
+                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop " +
+                "WHERE s.maSV = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            SinhVien sv = mapSinhVien(cursor);
+            cursor.close();
+            return sv;
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return null;
+    }
+
+    public int deleteSinhVien(int maSV) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            // Xóa dữ liệu điểm của sinh viên
+            db.delete(
+                    TABLE_DIEM,
+                    "maSV = ?",
+                    new String[]{String.valueOf(maSV)}
+            );
+
+            // Xóa dữ liệu điểm danh của sinh viên
+            db.delete(
+                    TABLE_DIEM_DANH,
+                    "maSV = ?",
+                    new String[]{String.valueOf(maSV)}
+            );
+
+            // Xóa tài khoản gắn với sinh viên
+            db.delete(
+                    TABLE_TAI_KHOAN,
+                    "maSV = ?",
+                    new String[]{String.valueOf(maSV)}
+            );
+
+            // Xóa sinh viên
+            int rows = db.delete(
+                    TABLE_SINH_VIEN,
+                    "maSV = ?",
+                    new String[]{String.valueOf(maSV)}
+            );
+
+            db.setTransactionSuccessful();
+            return rows;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private SinhVien mapSinhVien(Cursor cursor) {
+        SinhVien sv = new SinhVien();
+
+        sv.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
+        sv.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow("hoTen")));
+        sv.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow("ngaySinh")));
+        sv.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow("gioiTinh")));
+        sv.setEmail(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+        sv.setSoDienThoai(cursor.getString(cursor.getColumnIndexOrThrow("soDienThoai")));
+        sv.setDiaChi(cursor.getString(cursor.getColumnIndexOrThrow("diaChi")));
+        sv.setMaLop(cursor.getInt(cursor.getColumnIndexOrThrow("maLop")));
+
+        int idx = cursor.getColumnIndex("tenLop");
+        if (idx != -1) {
+            sv.setTenLop(cursor.getString(idx));
+        }
+
+        return sv;
+    }
+
+    // --- TAI KHOAN / AUTH QUERIES ---
+
+    public TaiKhoan checkLogin(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TAI_KHOAN,
+                null,
+                "username=? AND password=?",
+                new String[]{username, password},
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            TaiKhoan tk = mapTaiKhoan(cursor);
+            cursor.close();
+            return tk;
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return null;
+    }
+
+    public TaiKhoan getTaiKhoanById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TAI_KHOAN,
+                null,
+                "id = ?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            TaiKhoan tk = mapTaiKhoan(cursor);
+            cursor.close();
+            return tk;
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return null;
+    }
+
+    public boolean isUsernameExists(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TAI_KHOAN,
+                new String[]{"id"},
+                "username = ?",
+                new String[]{username},
+                null,
+                null,
+                null
+        );
+
+        boolean exists = cursor != null && cursor.moveToFirst();
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return exists;
+    }
+
+    public boolean isEmailExists(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TAI_KHOAN,
+                new String[]{"id"},
+                "email = ?",
+                new String[]{email},
+                null,
+                null,
+                null
+        );
+
+        boolean exists = cursor != null && cursor.moveToFirst();
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return exists;
+    }
+
+    public long registerStudentAccount(TaiKhoan tk, SinhVien sv) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            ContentValues svValues = new ContentValues();
+            svValues.put("hoTen", sv.getHoTen());
+            svValues.put("ngaySinh", sv.getNgaySinh());
+            svValues.put("gioiTinh", sv.getGioiTinh());
+            svValues.put("email", sv.getEmail());
+            svValues.put("soDienThoai", sv.getSoDienThoai());
+            svValues.put("diaChi", sv.getDiaChi());
+            svValues.put("maLop", sv.getMaLop());
+
+            long maSV = db.insert(TABLE_SINH_VIEN, null, svValues);
+
+            if (maSV == -1) {
+                return -1;
+            }
+
+            ContentValues tkValues = new ContentValues();
+            tkValues.put("username", tk.getUsername());
+            tkValues.put("password", tk.getPassword());
+            tkValues.put("hoTen", tk.getHoTen());
+            tkValues.put("email", tk.getEmail());
+            tkValues.put("role", tk.getRole());
+            tkValues.put("maSV", maSV);
+
+            long accountId = db.insert(TABLE_TAI_KHOAN, null, tkValues);
+
+            if (accountId == -1) {
+                return -1;
+            }
+
+            db.setTransactionSuccessful();
+            return accountId;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public boolean changePassword(int userId, String oldHashedPassword, String newHashedPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TAI_KHOAN,
+                new String[]{"id"},
+                "id = ? AND password = ?",
+                new String[]{String.valueOf(userId), oldHashedPassword},
+                null,
+                null,
+                null
+        );
+
+        boolean isOldPasswordCorrect = cursor != null && cursor.moveToFirst();
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        if (!isOldPasswordCorrect) {
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("password", newHashedPassword);
+
+        int rows = db.update(
+                TABLE_TAI_KHOAN,
+                values,
+                "id = ?",
+                new String[]{String.valueOf(userId)}
+        );
+
+        return rows > 0;
+    }
+    public boolean resetPassword(String username, String email, String newHashedPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("password", newHashedPassword);
+
+        int rows = db.update(
+                TABLE_TAI_KHOAN,
+                values,
+                "username = ? AND email = ?",
+                new String[]{username, email}
+        );
+
+        return rows > 0;
+    }
+
+    private TaiKhoan mapTaiKhoan(Cursor cursor) {
+        return new TaiKhoan(
+                cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                cursor.getString(cursor.getColumnIndexOrThrow("username")),
+                cursor.getString(cursor.getColumnIndexOrThrow("password")),
+                cursor.getString(cursor.getColumnIndexOrThrow("hoTen")),
+                cursor.getString(cursor.getColumnIndexOrThrow("email")),
+                cursor.getString(cursor.getColumnIndexOrThrow("role")),
+                cursor.getInt(cursor.getColumnIndexOrThrow("maSV"))
+        );
+    }
+
+    // --- DIEM DANH QUERIES ---
+
+    public List<DiemDanh> getDiemDanhBySinhVien(int maSV, int maMH) {
+        List<DiemDanh> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT dd.*, sv.hoTen AS tenSV, mh.tenMH AS tenMH " +
+                "FROM " + TABLE_DIEM_DANH + " dd " +
+                "LEFT JOIN " + TABLE_SINH_VIEN + " sv ON dd.maSV = sv.maSV " +
+                "LEFT JOIN " + TABLE_MON_HOC + " mh ON dd.maMH = mh.maMH " +
+                "WHERE dd.maSV = ? AND dd.maMH = ? " +
+                "ORDER BY dd.ngay DESC";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{String.valueOf(maSV), String.valueOf(maMH)}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                DiemDanh dd = new DiemDanh();
+
+                dd.setMaDiemDanh(cursor.getInt(cursor.getColumnIndexOrThrow("maDiemDanh")));
+                dd.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
+                dd.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
+                dd.setNgay(cursor.getString(cursor.getColumnIndexOrThrow("ngay")));
+                dd.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow("trangThai")));
+
+                int tenSVIndex = cursor.getColumnIndex("tenSV");
+                if (tenSVIndex != -1) {
+                    dd.setTenSV(cursor.getString(tenSVIndex));
+                }
+
+                int tenMHIndex = cursor.getColumnIndex("tenMH");
+                if (tenMHIndex != -1) {
+                    dd.setTenMH(cursor.getString(tenMHIndex));
+                }
+
+                list.add(dd);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+    public long insertDiemDanh(DiemDanh dd) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("maSV", dd.getMaSV());
+        values.put("maMH", dd.getMaMH());
+        values.put("ngay", dd.getNgay());
+        values.put("trangThai", dd.getTrangThai());
+
+        return db.insert(TABLE_DIEM_DANH, null, values);
+    }
+
+    // --- THONG BAO QUERIES ---
+
+    public int countUnreadThongBao() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_THONG_BAO + " WHERE daDoc = 0",
+                null
+        );
+
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+    public List<ThongBao> getAllThongBao() {
+        List<ThongBao> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_THONG_BAO,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "maThongBao DESC"
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                ThongBao tb = new ThongBao();
+
+                tb.setMaThongBao(cursor.getInt(cursor.getColumnIndexOrThrow("maThongBao")));
+                tb.setTieuDe(cursor.getString(cursor.getColumnIndexOrThrow("tieuDe")));
+                tb.setNoiDung(cursor.getString(cursor.getColumnIndexOrThrow("noiDung")));
+                tb.setNgayTao(cursor.getString(cursor.getColumnIndexOrThrow("ngayTao")));
+                tb.setDaDoc(cursor.getInt(cursor.getColumnIndexOrThrow("daDoc")));
+                tb.setLoai(cursor.getString(cursor.getColumnIndexOrThrow("loai")));
+
+                list.add(tb);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public int markThongBaoAsRead(int maThongBao) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("daDoc", 1);
+
+        return db.update(
+                TABLE_THONG_BAO,
+                values,
+                "maThongBao = ?",
+                new String[]{String.valueOf(maThongBao)}
+        );
+    }
+
+    public int markAllThongBaoAsRead() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("daDoc", 1);
+
+        return db.update(
+                TABLE_THONG_BAO,
+                values,
+                null,
+                null
+        );
+    }
+
+    public boolean deleteThongBao(int maThongBao) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        return db.delete(
+                TABLE_THONG_BAO,
+                "maThongBao = ?",
+                new String[]{String.valueOf(maThongBao)}
+        ) > 0;
+    }
+
+    public long insertThongBao(ThongBao tb) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("tieuDe", tb.getTieuDe());
+        values.put("noiDung", tb.getNoiDung());
+        values.put("ngayTao", tb.getNgayTao());
+        values.put("daDoc", tb.getDaDoc());
+        values.put("loai", tb.getLoai());
+
+        return db.insert(TABLE_THONG_BAO, null, values);
+    }
+
+    // --- DIEM / MON HOC EXTRA ---
+
+    public List<Diem> getDiemBySinhVien(int maSV, String hocKy) {
+        List<Diem> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT d.*, m.tenMH FROM " + TABLE_DIEM + " d " +
+                "LEFT JOIN " + TABLE_MON_HOC + " m ON d.maMH = m.maMH " +
+                "WHERE d.maSV = ? AND d.hocKy = ? " +
+                "ORDER BY m.tenMH ASC";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{String.valueOf(maSV), hocKy}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                Diem diem = new Diem();
+
+                diem.setMaDiem(cursor.getInt(cursor.getColumnIndexOrThrow("maDiem")));
+                diem.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
+                diem.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
+                diem.setDiemGiuaKy(cursor.getFloat(cursor.getColumnIndexOrThrow("diemGiuaKy")));
+                diem.setDiemCuoiKy(cursor.getFloat(cursor.getColumnIndexOrThrow("diemCuoiKy")));
+                diem.setDiemBaiTap(cursor.getFloat(cursor.getColumnIndexOrThrow("diemBaiTap")));
+                diem.setHocKy(cursor.getString(cursor.getColumnIndexOrThrow("hocKy")));
+
+                int tenMHIndex = cursor.getColumnIndex("tenMH");
+                if (tenMHIndex != -1) {
+                    diem.setTenMH(cursor.getString(tenMHIndex));
+                }
+
+                list.add(diem);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public float getGPAHocKy(int maSV, String hocKy) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT AVG((diemBaiTap * 0.2) + (diemGiuaKy * 0.3) + (diemCuoiKy * 0.5)) " +
+                "FROM " + TABLE_DIEM + " " +
+                "WHERE maSV = ? AND hocKy = ?";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{String.valueOf(maSV), hocKy}
+        );
+
+        float gpa = 0;
+
+        if (cursor.moveToFirst()) {
+            gpa = cursor.getFloat(0);
+        }
+
+        cursor.close();
+        return gpa;
+    }
+    public float getGPA(int maSV) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT AVG((diemBaiTap * 0.2) + (diemGiuaKy * 0.3) + (diemCuoiKy * 0.5)) " +
+                "FROM " + TABLE_DIEM + " WHERE maSV = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
+
+        float gpa = 0;
+
+        if (cursor.moveToFirst()) {
+            gpa = cursor.getFloat(0);
+        }
+
+        cursor.close();
+        return gpa;
+    }
+
+    public long insertMonHoc(MonHoc mh) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COL_MH_TEN, mh.getTenMH());
+        values.put(COL_MH_TINCHI, mh.getSoTinChi());
+        values.put(COL_MH_GV, mh.getGiangVien());
+        values.put(COL_MH_LICHHOC, mh.getLichHoc());
+        values.put(COL_MH_TAILIEU, mh.getTaiLieu());
+        values.put(COL_MH_SOLUONGMAX, mh.getSoLuongMax());
+
+        return db.insert(TABLE_MON_HOC, null, values);
+    }
+
+    public int updateMonHoc(MonHoc mh) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COL_MH_TEN, mh.getTenMH());
+        values.put(COL_MH_TINCHI, mh.getSoTinChi());
+        values.put(COL_MH_GV, mh.getGiangVien());
+        values.put(COL_MH_LICHHOC, mh.getLichHoc());
+        values.put(COL_MH_TAILIEU, mh.getTaiLieu());
+        values.put(COL_MH_SOLUONGMAX, mh.getSoLuongMax());
+
+        return db.update(
+                TABLE_MON_HOC,
+                values,
+                COL_MH_ID + "=?",
+                new String[]{String.valueOf(mh.getMaMH())}
+        );
+    }
+
+    public List<TaiLieu> getTaiLieuByMonHoc(int maMH, String loaiFile) {
+        List<TaiLieu> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor;
+
+        if (loaiFile == null || loaiFile.equalsIgnoreCase("Tất cả")) {
+            cursor = db.query(
+                    TABLE_TAI_LIEU,
+                    null,
+                    "maMH = ?",
+                    new String[]{String.valueOf(maMH)},
+                    null,
+                    null,
+                    "maTL DESC"
+            );
+        } else {
+            cursor = db.query(
+                    TABLE_TAI_LIEU,
+                    null,
+                    "maMH = ? AND loaiFile = ?",
+                    new String[]{String.valueOf(maMH), loaiFile},
+                    null,
+                    null,
+                    "maTL DESC"
+            );
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                TaiLieu tl = new TaiLieu();
+
+                tl.setMaTL(cursor.getInt(cursor.getColumnIndexOrThrow("maTL")));
+                tl.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
+                tl.setTenFile(cursor.getString(cursor.getColumnIndexOrThrow("tenFile")));
+                tl.setLoaiFile(cursor.getString(cursor.getColumnIndexOrThrow("loaiFile")));
+                tl.setKichThuoc(cursor.getString(cursor.getColumnIndexOrThrow("kichThuoc")));
+                tl.setNgayDang(cursor.getString(cursor.getColumnIndexOrThrow("ngayDang")));
+                tl.setUrlOrPath(cursor.getString(cursor.getColumnIndexOrThrow("urlOrPath")));
+
+                list.add(tl);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+    public boolean deleteMonHoc(int maMH) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(
+                TABLE_DIEM,
+                "maMH=?",
+                new String[]{String.valueOf(maMH)}
+        );
+
+        return db.delete(
+                TABLE_MON_HOC,
+                "maMH=?",
+                new String[]{String.valueOf(maMH)}
+        ) > 0;
+    }
+
+    public List<MonHoc> getRegisteredSubjects(int maSV) {
+        List<MonHoc> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT m.* FROM " + TABLE_MON_HOC + " m " +
+                "JOIN " + TABLE_DIEM + " d ON m.maMH = d.maMH " +
+                "WHERE d.maSV = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(mapMonHoc(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public List<MonHoc> getUnregisteredSubjects(int maSV) {
+        List<MonHoc> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_MON_HOC + " " +
+                "WHERE maMH NOT IN (" +
+                "SELECT maMH FROM " + TABLE_DIEM + " WHERE maSV = ?" +
+                ") " +
+                "ORDER BY " + COL_MH_TEN + " ASC";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{String.valueOf(maSV)}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(mapMonHoc(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+    public List<ThoiKhoaBieu> getTKBBySinhVienAndThu(int maSV, int thu) {
+        List<ThoiKhoaBieu> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_THOI_KHOA_BIEU +
+                " WHERE maSV = ? AND thu = ? " +
+                " ORDER BY tietBatDau ASC";
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{String.valueOf(maSV), String.valueOf(thu)}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                ThoiKhoaBieu tkb = new ThoiKhoaBieu();
+
                 tkb.setMaTKB(cursor.getInt(cursor.getColumnIndexOrThrow("maTKB")));
                 tkb.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
                 tkb.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
@@ -321,658 +1240,90 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 tkb.setPhongHoc(cursor.getString(cursor.getColumnIndexOrThrow("phongHoc")));
                 tkb.setTenGiangVien(cursor.getString(cursor.getColumnIndexOrThrow("tenGiangVien")));
                 tkb.setTuan(cursor.getString(cursor.getColumnIndexOrThrow("tuan")));
-                tkb.setTenMH(cursor.getString(cursor.getColumnIndexOrThrow("tenMH")));
+
                 list.add(tkb);
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         return list;
     }
 
-    public List<com.example.qlsv_kthp.model.TaiLieu> getTaiLieuByMonHoc(int maMH, String loaiFile) {
-        List<com.example.qlsv_kthp.model.TaiLieu> list = new ArrayList<>();
+    public int getCount(String tableName) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query;
-        String[] args;
-        if (loaiFile == null || loaiFile.isEmpty() || loaiFile.equalsIgnoreCase("Tất cả")) {
-            query = "SELECT * FROM " + TABLE_TAI_LIEU + " WHERE maMH = ? ORDER BY ngayDang DESC";
-            args = new String[]{String.valueOf(maMH)};
-        } else {
-            query = "SELECT * FROM " + TABLE_TAI_LIEU + " WHERE maMH = ? AND loaiFile = ? ORDER BY ngayDang DESC";
-            args = new String[]{String.valueOf(maMH), loaiFile};
-        }
-        Cursor cursor = db.rawQuery(query, args);
-        if (cursor.moveToFirst()) {
-            do {
-                com.example.qlsv_kthp.model.TaiLieu tl = new com.example.qlsv_kthp.model.TaiLieu();
-                tl.setMaTL(cursor.getInt(cursor.getColumnIndexOrThrow("maTL")));
-                tl.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
-                tl.setTenFile(cursor.getString(cursor.getColumnIndexOrThrow("tenFile")));
-                tl.setLoaiFile(cursor.getString(cursor.getColumnIndexOrThrow("loaiFile")));
-                tl.setKichThuoc(cursor.getString(cursor.getColumnIndexOrThrow("kichThuoc")));
-                tl.setNgayDang(cursor.getString(cursor.getColumnIndexOrThrow("ngayDang")));
-                tl.setUrlOrPath(cursor.getString(cursor.getColumnIndexOrThrow("urlOrPath")));
-                list.add(tl);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
 
-    private void insertTKB(SQLiteDatabase db, int maSV, int maMH, int thu, int tietBatDau, int tietKetThuc, String phongHoc, String tenGiangVien, String tuan) {
-        ContentValues values = new ContentValues();
-        values.put("maSV", maSV);
-        values.put("maMH", maMH);
-        values.put("thu", thu);
-        values.put("tietBatDau", tietBatDau);
-        values.put("tietKetThuc", tietKetThuc);
-        values.put("phongHoc", phongHoc);
-        values.put("tenGiangVien", tenGiangVien);
-        values.put("tuan", tuan);
-        db.insert(TABLE_THOI_KHOA_BIEU, null, values);
-    }
-
-    private void insertTaiLieu(SQLiteDatabase db, int maMH, String tenFile, String loaiFile, String kichThuoc, String ngayDang, String urlOrPath) {
-        ContentValues values = new ContentValues();
-        values.put("maMH", maMH);
-        values.put("tenFile", tenFile);
-        values.put("loaiFile", loaiFile);
-        values.put("kichThuoc", kichThuoc);
-        values.put("ngayDang", ngayDang);
-        values.put("urlOrPath", urlOrPath);
-        db.insert(TABLE_TAI_LIEU, null, values);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_KHOAN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SINH_VIEN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOP);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MON_HOC);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIEM_DANH);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_THONG_BAO);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_THOI_KHOA_BIEU);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_LIEU);
-        onCreate(db);
-    }
-
-    public TaiKhoan checkLogin(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TAI_KHOAN, null,
-                COL_TK_USERNAME + "=? AND " + COL_TK_PASSWORD + "=?",
-                new String[]{username, password}, null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            TaiKhoan tk = mapTaiKhoan(cursor);
-            cursor.close();
-            return tk;
-        }
-        return null;
-    }
-
-    public TaiKhoan getTaiKhoanById(int userId) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TAI_KHOAN, null, COL_TK_ID + "=?",
-                new String[]{String.valueOf(userId)}, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            TaiKhoan taiKhoan = mapTaiKhoan(cursor);
-            cursor.close();
-            return taiKhoan;
-        }
-        return null;
-    }
-
-    private TaiKhoan mapTaiKhoan(Cursor cursor) {
-        return new TaiKhoan(
-                cursor.getInt(cursor.getColumnIndexOrThrow(COL_TK_ID)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COL_TK_USERNAME)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COL_TK_PASSWORD)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COL_TK_HOTEN)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COL_TK_EMAIL)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COL_TK_ROLE)),
-                cursor.getInt(cursor.getColumnIndexOrThrow(COL_TK_MASV))
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + tableName,
+                null
         );
-    }
 
-    public boolean isUsernameExists(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_TAI_KHOAN + " WHERE " + COL_TK_USERNAME + "=?",
-                new String[]{username});
-        boolean exists = cursor.moveToFirst();
-        cursor.close();
-        return exists;
-    }
-
-    public boolean isEmailExists(String email) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_TAI_KHOAN + " WHERE " + COL_TK_EMAIL + "=?",
-                new String[]{email});
-        boolean exists = cursor.moveToFirst();
-        cursor.close();
-        return exists;
-    }
-
-    public long registerStudentAccount(TaiKhoan taiKhoan, SinhVien sinhVien) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            if (isUsernameExists(taiKhoan.getUsername()) || isEmailExists(taiKhoan.getEmail())) {
-                return -1;
-            }
-
-            ContentValues studentValues = new ContentValues();
-            studentValues.put(COL_SV_HOTEN, sinhVien.getHoTen());
-            studentValues.put(COL_SV_NGAYSINH, sinhVien.getNgaySinh());
-            studentValues.put(COL_SV_GIOITINH, sinhVien.getGioiTinh());
-            studentValues.put(COL_SV_EMAIL, sinhVien.getEmail());
-            studentValues.put(COL_SV_SDT, sinhVien.getSoDienThoai());
-            studentValues.put(COL_SV_DIACHI, sinhVien.getDiaChi());
-            studentValues.put(COL_SV_MALOP, sinhVien.getMaLop());
-            long maSV = db.insert(TABLE_SINH_VIEN, null, studentValues);
-
-            if (maSV <= 0) {
-                return -1;
-            }
-
-            ContentValues accountValues = new ContentValues();
-            accountValues.put(COL_TK_USERNAME, taiKhoan.getUsername());
-            accountValues.put(COL_TK_PASSWORD, taiKhoan.getPassword());
-            accountValues.put(COL_TK_HOTEN, taiKhoan.getHoTen());
-            accountValues.put(COL_TK_EMAIL, taiKhoan.getEmail());
-            accountValues.put(COL_TK_ROLE, taiKhoan.getRole());
-            accountValues.put(COL_TK_MASV, maSV);
-            long accountId = db.insert(TABLE_TAI_KHOAN, null, accountValues);
-
-            if (accountId <= 0) {
-                return -1;
-            }
-
-            insertNotification(db,
-                    "Chao mung tai khoan moi",
-                    "Tai khoan sinh vien " + taiKhoan.getUsername() + " da duoc tao thanh cong. Ban co the dang nhap ngay de xem du lieu mau.",
-                    "2026-05-14 20:00", 0, "general");
-
-            db.setTransactionSuccessful();
-            return accountId;
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    public boolean resetPassword(String username, String email, String newPassHash) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_TK_PASSWORD, newPassHash);
-        int rows = db.update(TABLE_TAI_KHOAN, values,
-                COL_TK_USERNAME + "=? AND " + COL_TK_EMAIL + "=?",
-                new String[]{username, email});
-        return rows > 0;
-    }
-
-    public List<SinhVien> getAllSinhVien() {
-        List<SinhVien> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop";
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(mapSinhVien(cursor));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public long insertSinhVien(SinhVien sv) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_SV_HOTEN, sv.getHoTen());
-        values.put(COL_SV_NGAYSINH, sv.getNgaySinh());
-        values.put(COL_SV_GIOITINH, sv.getGioiTinh());
-        values.put(COL_SV_EMAIL, sv.getEmail());
-        values.put(COL_SV_SDT, sv.getSoDienThoai());
-        values.put(COL_SV_DIACHI, sv.getDiaChi());
-        values.put(COL_SV_MALOP, sv.getMaLop());
-        return db.insert(TABLE_SINH_VIEN, null, values);
-    }
-
-    public int updateSinhVien(SinhVien sv) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_SV_HOTEN, sv.getHoTen());
-        values.put(COL_SV_NGAYSINH, sv.getNgaySinh());
-        values.put(COL_SV_GIOITINH, sv.getGioiTinh());
-        values.put(COL_SV_EMAIL, sv.getEmail());
-        values.put(COL_SV_SDT, sv.getSoDienThoai());
-        values.put(COL_SV_DIACHI, sv.getDiaChi());
-        values.put(COL_SV_MALOP, sv.getMaLop());
-        return db.update(TABLE_SINH_VIEN, values, COL_SV_ID + "=?", new String[]{String.valueOf(sv.getMaSV())});
-    }
-
-    public List<Lop> getAllLop() {
-        List<Lop> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_LOP, null, null, null, null, null, COL_LOP_TEN + " ASC");
-        if (cursor.moveToFirst()) {
-            do {
-                Lop lop = new Lop(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_LOP_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COL_LOP_TEN)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COL_LOP_KHOA))
-                );
-                list.add(lop);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public int getCount(String table) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + table, null);
         int count = 0;
+
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
         }
+
         cursor.close();
         return count;
     }
+    private void insertSampleData(SQLiteDatabase db) {
+        ContentValues v = new ContentValues();
+        v.put("tenLop", "CNTT K18");
+        v.put("khoaHoc", "2023-2027");
+        long lopId = db.insert(TABLE_LOP, null, v);
 
-    public float getGPA(int maSV) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT AVG((diemBaiTap * 0.2) + (diemGiuaKy * 0.3) + (diemCuoiKy * 0.5)) FROM " + TABLE_DIEM + " WHERE maSV = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
-        float gpa = 0;
-        if (cursor.moveToFirst()) {
-            gpa = cursor.getFloat(0);
-        }
-        cursor.close();
-        return gpa;
-    }
+        ContentValues admin = new ContentValues();
+        admin.put("hoTen", "Admin User");
+        admin.put("role", "admin");
+        admin.put("username", "admin");
+        admin.put("password", SecurityUtils.sha256("admin123"));
+        admin.put("email", "admin@qlsv.com");
+        admin.put("maSV", -1);
+        db.insert(TABLE_TAI_KHOAN, null, admin);
 
-    public SinhVien getSinhVienById(int maSV) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
-                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop WHERE s.maSV = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
-        SinhVien sv = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            sv = mapSinhVien(cursor);
-            cursor.close();
-        }
-        return sv;
-    }
+        ContentValues sv = new ContentValues();
+        sv.put("hoTen", "Nguyễn Văn An");
+        sv.put("ngaySinh", "01/01/2004");
+        sv.put("gioiTinh", "Nam");
+        sv.put("email", "sv01@qlsv.com");
+        sv.put("soDienThoai", "0987654321");
+        sv.put("diaChi", "Hà Nội");
+        sv.put("maLop", lopId);
+        long maSV = db.insert(TABLE_SINH_VIEN, null, sv);
 
-    private SinhVien mapSinhVien(Cursor cursor) {
-        SinhVien sv = new SinhVien();
-        sv.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow(COL_SV_ID)));
-        sv.setHoTen(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_HOTEN)));
-        sv.setNgaySinh(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_NGAYSINH)));
-        sv.setGioiTinh(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_GIOITINH)));
-        sv.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_EMAIL)));
-        sv.setSoDienThoai(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_SDT)));
-        sv.setDiaChi(cursor.getString(cursor.getColumnIndexOrThrow(COL_SV_DIACHI)));
-        sv.setMaLop(cursor.getInt(cursor.getColumnIndexOrThrow(COL_SV_MALOP)));
-        int tenLopIndex = cursor.getColumnIndex(COL_LOP_TEN);
-        if (tenLopIndex >= 0) {
-            sv.setTenLop(cursor.getString(tenLopIndex));
-        }
-        return sv;
-    }
+        ContentValues user = new ContentValues();
+        user.put("hoTen", "Nguyễn Văn An");
+        user.put("role", "student");
+        user.put("username", "sv01");
+        user.put("password", SecurityUtils.sha256("123456"));
+        user.put("email", "sv01@qlsv.com");
+        user.put("maSV", maSV);
+        db.insert(TABLE_TAI_KHOAN, null, user);
 
-    public List<SinhVien> searchSinhVien(String keyword) {
-        List<SinhVien> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
-                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop " +
-                "WHERE s.hoTen LIKE ? OR CAST(s.maSV AS TEXT) LIKE ?";
-        String like = "%" + keyword + "%";
-        Cursor cursor = db.rawQuery(query, new String[]{like, like});
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(mapSinhVien(cursor));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
+        ContentValues mh = new ContentValues();
+        mh.put(COL_MH_TEN, "Java nâng cao");
+        mh.put(COL_MH_GV, "GV Nguyễn Văn B");
+        mh.put(COL_MH_TINCHI, 3);
+        mh.put(COL_MH_LICHHOC, "Thứ 2 - Tiết 1-3");
+        mh.put(COL_MH_TAILIEU, "Tài liệu Java");
+        mh.put(COL_MH_SOLUONGMAX, 65);
+        long maMH = db.insert(TABLE_MON_HOC, null, mh);
 
-    public int deleteSinhVien(int maSV) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_DIEM, "maSV=?", new String[]{String.valueOf(maSV)});
-        db.delete(TABLE_DIEM_DANH, "maSV=?", new String[]{String.valueOf(maSV)});
-        db.delete(TABLE_TAI_KHOAN, "maSV=?", new String[]{String.valueOf(maSV)});
-        return db.delete(TABLE_SINH_VIEN, "maSV=?", new String[]{String.valueOf(maSV)});
-    }
+        ContentValues diem = new ContentValues();
+        diem.put("maSV", maSV);
+        diem.put("maMH", maMH);
+        diem.put("hocKy", "HK1-2025");
+        diem.put("diemGiuaKy", 0);
+        diem.put("diemCuoiKy", 0);
+        diem.put("diemBaiTap", 0);
+        db.insert(TABLE_DIEM, null, diem);
 
-    public List<SinhVien> getSinhVienByLop(int maLop) {
-        List<SinhVien> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT s.*, l.tenLop FROM " + TABLE_SINH_VIEN + " s " +
-                "LEFT JOIN " + TABLE_LOP + " l ON s.maLop = l.maLop WHERE s.maLop = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maLop)});
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(mapSinhVien(cursor));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public List<MonHoc> getAllMonHoc() {
-        List<MonHoc> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_MON_HOC, null, null, null, null, null, COL_MH_TEN + " ASC");
-        if (cursor.moveToFirst()) {
-            do {
-                MonHoc mh = new MonHoc(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
-                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
-                );
-                list.add(mh);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public long insertMonHoc(MonHoc mh) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_MH_TEN, mh.getTenMH());
-        values.put(COL_MH_TINCHI, mh.getSoTinChi());
-        values.put(COL_MH_GV, mh.getGiangVien());
-        return db.insert(TABLE_MON_HOC, null, values);
-    }
-
-    public List<MonHoc> getRegisteredSubjects(int maSV) {
-        List<MonHoc> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT DISTINCT m.* FROM " + TABLE_MON_HOC + " m " +
-                "INNER JOIN " + TABLE_DIEM + " d ON m.maMH = d.maMH " +
-                "WHERE d.maSV = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
-        if (cursor.moveToFirst()) {
-            do {
-                MonHoc mh = new MonHoc(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
-                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
-                );
-                list.add(mh);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public int countStudentsInSubject(int maMH) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(DISTINCT maSV) FROM " + TABLE_DIEM + " WHERE maMH = ?",
-                new String[]{String.valueOf(maMH)});
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        return count;
-    }
-
-    public boolean isSubjectRegistered(int maSV, int maMH) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_DIEM + " WHERE maSV = ? AND maMH = ?",
-                new String[]{String.valueOf(maSV), String.valueOf(maMH)});
-        boolean registered = cursor.moveToFirst();
-        cursor.close();
-        return registered;
-    }
-
-    public void registerSubject(int maSV, int maMH) {
-        if (!isSubjectRegistered(maSV, maMH)) {
-            insertScore(this.getWritableDatabase(), maSV, maMH, 0, 0, 0, "HK1-2025");
-        }
-    }
-
-    public List<MonHoc> getUnregisteredSubjects(int maSV) {
-        List<MonHoc> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_MON_HOC + " WHERE maMH NOT IN " +
-                "(SELECT maMH FROM " + TABLE_DIEM + " WHERE maSV = ?)";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV)});
-        if (cursor.moveToFirst()) {
-            do {
-                MonHoc mh = new MonHoc(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COL_MH_TEN)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_MH_TINCHI)),
-                        cursor.getColumnIndex(COL_MH_GV) >= 0 && !cursor.isNull(cursor.getColumnIndex(COL_MH_GV)) ? cursor.getString(cursor.getColumnIndex(COL_MH_GV)) : "Chưa phân công"
-                );
-                list.add(mh);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public int updateMonHoc(MonHoc mh) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_MH_TEN, mh.getTenMH());
-        values.put(COL_MH_TINCHI, mh.getSoTinChi());
-        values.put(COL_MH_GV, mh.getGiangVien());
-        return db.update(TABLE_MON_HOC, values, COL_MH_ID + "=?", new String[]{String.valueOf(mh.getMaMH())});
-    }
-
-    public boolean deleteMonHoc(int maMH) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_DIEM + " WHERE maMH=?",
-                new String[]{String.valueOf(maMH)});
-        int count = 0;
-        if (c.moveToFirst()) {
-            count = c.getInt(0);
-        }
-        c.close();
-        if (count > 0) {
-            return false;
-        }
-        db.delete(TABLE_DIEM_DANH, "maMH=?", new String[]{String.valueOf(maMH)});
-        db.delete(TABLE_MON_HOC, "maMH=?", new String[]{String.valueOf(maMH)});
-        return true;
-    }
-
-    public List<Diem> getDiemBySinhVien(int maSV, String hocKy) {
-        List<Diem> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT d.*, m.tenMH, m.soTinChi FROM " + TABLE_DIEM + " d " +
-                "JOIN " + TABLE_MON_HOC + " m ON d.maMH = m.maMH " +
-                "WHERE d.maSV = ? AND d.hocKy = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV), hocKy});
-        if (cursor.moveToFirst()) {
-            do {
-                Diem diem = new Diem();
-                diem.setMaDiem(cursor.getInt(cursor.getColumnIndexOrThrow("maDiem")));
-                diem.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
-                diem.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
-                diem.setDiemGiuaKy(cursor.getFloat(cursor.getColumnIndexOrThrow("diemGiuaKy")));
-                diem.setDiemCuoiKy(cursor.getFloat(cursor.getColumnIndexOrThrow("diemCuoiKy")));
-                diem.setDiemBaiTap(cursor.getFloat(cursor.getColumnIndexOrThrow("diemBaiTap")));
-                diem.setHocKy(cursor.getString(cursor.getColumnIndexOrThrow("hocKy")));
-                diem.setTenMH(cursor.getString(cursor.getColumnIndexOrThrow("tenMH")));
-                diem.setSoTinChi(cursor.getInt(cursor.getColumnIndexOrThrow("soTinChi")));
-                list.add(diem);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public long insertOrUpdateDiem(Diem diem) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT maDiem FROM " + TABLE_DIEM + " WHERE maSV=? AND maMH=? AND hocKy=?",
-                new String[]{String.valueOf(diem.getMaSV()), String.valueOf(diem.getMaMH()), diem.getHocKy()});
-        ContentValues values = new ContentValues();
-        values.put("maSV", diem.getMaSV());
-        values.put("maMH", diem.getMaMH());
-        values.put("diemGiuaKy", diem.getDiemGiuaKy());
-        values.put("diemCuoiKy", diem.getDiemCuoiKy());
-        values.put("diemBaiTap", diem.getDiemBaiTap());
-        values.put("hocKy", diem.getHocKy());
-        long result;
-        if (c.moveToFirst()) {
-            int id = c.getInt(0);
-            result = db.update(TABLE_DIEM, values, "maDiem=?", new String[]{String.valueOf(id)});
-        } else {
-            result = db.insert(TABLE_DIEM, null, values);
-        }
-        c.close();
-        return result;
-    }
-
-    public float getGPAHocKy(int maSV, String hocKy) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT SUM((d.diemBaiTap*0.2 + d.diemGiuaKy*0.3 + d.diemCuoiKy*0.5) * m.soTinChi) / " +
-                "SUM(m.soTinChi) FROM " + TABLE_DIEM + " d " +
-                "JOIN " + TABLE_MON_HOC + " m ON d.maMH = m.maMH " +
-                "WHERE d.maSV=? AND d.hocKy=?";
-        Cursor c = db.rawQuery(query, new String[]{String.valueOf(maSV), hocKy});
-        float gpa = 0;
-        if (c.moveToFirst()) {
-            gpa = c.getFloat(0);
-        }
-        c.close();
-        return gpa;
-    }
-
-    public long insertDiemDanh(DiemDanh dd) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT maDiemDanh FROM " + TABLE_DIEM_DANH + " WHERE maSV=? AND maMH=? AND ngay=?",
-                new String[]{String.valueOf(dd.getMaSV()), String.valueOf(dd.getMaMH()), dd.getNgay()});
-        ContentValues values = new ContentValues();
-        values.put("maSV", dd.getMaSV());
-        values.put("maMH", dd.getMaMH());
-        values.put("ngay", dd.getNgay());
-        values.put("trangThai", dd.getTrangThai());
-        long result;
-        if (c.moveToFirst()) {
-            int id = c.getInt(0);
-            result = db.update(TABLE_DIEM_DANH, values, "maDiemDanh=?", new String[]{String.valueOf(id)});
-        } else {
-            result = db.insert(TABLE_DIEM_DANH, null, values);
-        }
-        c.close();
-        return result;
-    }
-
-    public List<DiemDanh> getDiemDanhBySinhVien(int maSV, int maMH) {
-        List<DiemDanh> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT dd.*, m.tenMH FROM " + TABLE_DIEM_DANH + " dd " +
-                "JOIN " + TABLE_MON_HOC + " m ON dd.maMH = m.maMH " +
-                "WHERE dd.maSV=? AND dd.maMH=? ORDER BY dd.ngay DESC";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(maSV), String.valueOf(maMH)});
-        if (cursor.moveToFirst()) {
-            do {
-                DiemDanh dd = new DiemDanh();
-                dd.setMaDiemDanh(cursor.getInt(cursor.getColumnIndexOrThrow("maDiemDanh")));
-                dd.setMaSV(cursor.getInt(cursor.getColumnIndexOrThrow("maSV")));
-                dd.setMaMH(cursor.getInt(cursor.getColumnIndexOrThrow("maMH")));
-                dd.setNgay(cursor.getString(cursor.getColumnIndexOrThrow("ngay")));
-                dd.setTrangThai(cursor.getInt(cursor.getColumnIndexOrThrow("trangThai")));
-                dd.setTenMH(cursor.getString(cursor.getColumnIndexOrThrow("tenMH")));
-                list.add(dd);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public int countVangMat(int maSV, int maMH) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(
-                "SELECT COUNT(*) FROM " + TABLE_DIEM_DANH + " WHERE maSV=? AND maMH=? AND trangThai=0",
-                new String[]{String.valueOf(maSV), String.valueOf(maMH)});
-        int count = 0;
-        if (c.moveToFirst()) {
-            count = c.getInt(0);
-        }
-        c.close();
-        return count;
-    }
-
-    public List<ThongBao> getAllThongBao() {
-        List<ThongBao> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_THONG_BAO, null, null, null, null, null, "ngayTao DESC");
-        if (cursor.moveToFirst()) {
-            do {
-                ThongBao tb = new ThongBao(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("maThongBao")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("tieuDe")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("noiDung")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("ngayTao")),
-                        cursor.getInt(cursor.getColumnIndexOrThrow("daDoc")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("loai"))
-                );
-                list.add(tb);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
-
-    public int markThongBaoAsRead(int maThongBao) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("daDoc", 1);
-        return db.update(TABLE_THONG_BAO, values, "maThongBao=?", new String[]{String.valueOf(maThongBao)});
-    }
-
-    public void markAllAsRead() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("daDoc", 1);
-        db.update(TABLE_THONG_BAO, values, null, null);
-    }
-
-    public int countUnreadThongBao() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_THONG_BAO + " WHERE daDoc=0", null);
-        int count = 0;
-        if (c.moveToFirst()) {
-            count = c.getInt(0);
-        }
-        c.close();
-        return count;
-    }
-
-    public long insertThongBao(ThongBao tb) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("tieuDe", tb.getTieuDe());
-        values.put("noiDung", tb.getNoiDung());
-        values.put("ngayTao", tb.getNgayTao());
-        values.put("daDoc", tb.getDaDoc());
-        values.put("loai", tb.getLoai());
-        return db.insert(TABLE_THONG_BAO, null, values);
-    }
-
-    public boolean changePassword(int userId, String oldPassHash, String newPassHash) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT id FROM " + TABLE_TAI_KHOAN + " WHERE id=? AND password=?",
-                new String[]{String.valueOf(userId), oldPassHash});
-        if (!c.moveToFirst()) {
-            c.close();
-            return false;
-        }
-        c.close();
-        ContentValues values = new ContentValues();
-        values.put("password", newPassHash);
-        db.update(TABLE_TAI_KHOAN, values, "id=?", new String[]{String.valueOf(userId)});
-        return true;
+        ContentValues tb = new ContentValues();
+        tb.put("tieuDe", "Chào mừng bạn");
+        tb.put("noiDung", "Chào mừng bạn đến với hệ thống quản lý sinh viên.");
+        tb.put("ngayTao", "01/01/2026 08:00");
+        tb.put("daDoc", 0);
+        tb.put("loai", "general");
+        db.insert(TABLE_THONG_BAO, null, tb);
     }
 }

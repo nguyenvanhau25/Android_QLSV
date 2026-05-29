@@ -1,40 +1,62 @@
 package com.example.qlsv_kthp.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.qlsv_kthp.R;
+import com.example.qlsv_kthp.databinding.ItemDocumentBinding;
 import com.example.qlsv_kthp.model.TaiLieu;
+
 import java.util.List;
-import android.widget.Toast;
 
+/**
+ * Adapter hiển thị tài liệu môn học - Senior Refactor
+ */
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHolder> {
-    private final List<TaiLieu> list;
 
-    public DocumentAdapter(List<TaiLieu> list) {
+    public interface OnDocumentClickListener {
+        void onDownloadClick(TaiLieu tl);
+        void onItemClick(TaiLieu tl);
+    }
+
+    private final List<TaiLieu> list;
+    private final OnDocumentClickListener listener;
+
+    public DocumentAdapter(List<TaiLieu> list, OnDocumentClickListener listener) {
         this.list = list;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_document, parent, false);
-        return new ViewHolder(view);
+        ItemDocumentBinding binding = ItemDocumentBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TaiLieu doc = list.get(position);
-        holder.tvFileType.setText(doc.getLoaiFile());
-        holder.tvDocName.setText(doc.getTenFile());
-        holder.tvDocMeta.setText(doc.getKichThuoc() + " · Đăng ngày " + doc.getNgayDang());
-        
-        holder.btnDownload.setOnClickListener(v -> {
-            Toast.makeText(v.getContext(), "Đang tải xuống " + doc.getTenFile(), Toast.LENGTH_SHORT).show();
-        });
+        TaiLieu tl = list.get(position);
+
+        holder.binding.tvFileName.setText(tl.getTenFile());
+        holder.binding.tvFileInfo.setText(String.format("%s · Đăng ngày %s",
+                tl.getKichThuoc(), tl.getNgayDang()));
+
+        // Set icon dựa trên loại file
+        int iconRes = R.drawable.ic_grade; // Default
+        if (tl.getLoaiFile() != null) {
+            String type = tl.getLoaiFile().toLowerCase();
+            if (type.contains("pdf")) iconRes = R.drawable.ic_grade; // Thay bằng ic_pdf nếu có
+            else if (type.contains("video")) iconRes = R.drawable.ic_home; // Thay bằng ic_video
+        }
+        holder.binding.ivFileIcon.setImageResource(iconRes);
+
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(tl));
+        holder.binding.btnDownload.setOnClickListener(v -> listener.onDownloadClick(tl));
     }
 
     @Override
@@ -43,15 +65,10 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFileType, tvDocName, tvDocMeta;
-        View btnDownload;
-
-        ViewHolder(View v) {
-            super(v);
-            tvFileType = v.findViewById(R.id.tvFileType);
-            tvDocName = v.findViewById(R.id.tvDocName);
-            tvDocMeta = v.findViewById(R.id.tvDocMeta);
-            btnDownload = v.findViewById(R.id.btnDownload);
+        final ItemDocumentBinding binding;
+        ViewHolder(ItemDocumentBinding b) {
+            super(b.getRoot());
+            binding = b;
         }
     }
 }
