@@ -4,131 +4,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@color/bg_main">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="56dp"
+        android:background="@color/bg_main"
+        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:navigationIconTint="@color/text_primary"
         app:title="Thời khóa biểu"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:menu="@menu/menu_timetable_student"
+        app:titleTextColor="@color/text_primary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Chip chọn tuần -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutWeekNav"
+    <LinearLayout
+        android:id="@+id/layoutActions"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:background="?attr/colorSurfaceVariant"
-        android:paddingHorizontal="8dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPrevWeek"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            style="@style/Widget.Material3.Button.IconButton"
-            app:icon="@drawable/ic_chevron_left"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tvWeekRange"
+            android:id="@+id/btnExportPdf"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Tuần 14: 14/04 – 20/04/2026"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btnPrevWeek"
-            app:layout_constraintEnd_toStartOf="@id/btnNextWeek" />
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Xuất PDF"
+            app:cornerRadius="12dp" />
+
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="1dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNextWeek"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            style="@style/Widget.Material3.Button.IconButton"
-            app:icon="@drawable/ic_chevron_right"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:id="@+id/btnExportIcs"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Xuất lịch"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Header ngày trong tuần (T2→T7) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDayHeaders"
         android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layoutWeekNav"
+        android:layout_height="72dp"
+        android:clipToPadding="false"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutActions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <View
-        android:id="@+id/dividerDays"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="?attr/colorOutlineVariant"
-        app:layout_constraintTop_toBottomOf="@id/rvDayHeaders"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- ViewPager2: mỗi trang = 1 ngày -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vpDays"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/dividerDays"
-        app:layout_constraintBottom_toTopOf="@id/layoutExport"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Thanh export phía dưới -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutExport"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:background="?attr/colorSurface"
-        android:elevation="4dp"
-        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/rvDayHeaders"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Use case: Export TKB cá nhân (PDF/ICS) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExportPdf"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="Tải PDF"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            app:icon="@drawable/ic_picture_as_pdf"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExportIcs"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="Thêm vào lịch"
-            style="@style/Widget.Material3.Button.TonalButton"
-            app:icon="@drawable/ic_event"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btnExportPdf" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

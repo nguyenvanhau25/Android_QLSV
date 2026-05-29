@@ -1,6 +1,5 @@
 package com.example.qlsv_kthp.adapter;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,23 +8,33 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qlsv_kthp.databinding.ItemNotificationBinding;
 import com.example.qlsv_kthp.model.ThongBao;
-import com.example.qlsv_kthp.ui.activity.NotificationDetailActivity;
 
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
   private final List<ThongBao> list;
+  private final OnNotificationClickListener listener;
 
-  public NotificationAdapter(List<ThongBao> list) {
+  public interface OnNotificationClickListener {
+    void onNotificationClick(ThongBao tb);
+    void onLongClick(ThongBao tb);
+  }
+
+  public NotificationAdapter(List<ThongBao> list, OnNotificationClickListener listener) {
     this.list = list;
+    this.listener = listener;
   }
 
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     ItemNotificationBinding binding = ItemNotificationBinding.inflate(
-            LayoutInflater.from(parent.getContext()), parent, false);
+            LayoutInflater.from(parent.getContext()),
+            parent,
+            false
+    );
+
     return new ViewHolder(binding);
   }
 
@@ -37,33 +46,36 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     holder.binding.tvBody.setText(tb.getNoiDung());
     holder.binding.tvTime.setText(tb.getNgayTao());
 
-    // Làm mờ thông báo đã đọc
     holder.itemView.setAlpha(tb.isRead() ? 0.65f : 1.0f);
 
-    // Mở chi tiết khi click
     holder.itemView.setOnClickListener(v -> {
-      Intent intent = new Intent(v.getContext(), NotificationDetailActivity.class);
-      intent.putExtra("maThongBao", tb.getMaThongBao());
-      intent.putExtra("tieuDe", tb.getTieuDe());
-      intent.putExtra("noiDung", tb.getNoiDung());
-      intent.putExtra("ngayTao", tb.getNgayTao());
-      v.getContext().startActivity(intent);
-      // Cập nhật UI ngay lập tức
+      if (listener != null) {
+        listener.onNotificationClick(tb);
+      }
+
       tb.setDaDoc(1);
       holder.itemView.setAlpha(0.65f);
+    });
+
+    holder.itemView.setOnLongClickListener(v -> {
+      if (listener != null) {
+        listener.onLongClick(tb);
+      }
+      return true;
     });
   }
 
   @Override
   public int getItemCount() {
-    return list.size();
+    return list == null ? 0 : list.size();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
     final ItemNotificationBinding binding;
-    ViewHolder(ItemNotificationBinding b) {
-      super(b.getRoot());
-      binding = b;
+
+    ViewHolder(ItemNotificationBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
     }
   }
 }

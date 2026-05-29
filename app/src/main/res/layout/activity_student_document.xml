@@ -4,106 +4,113 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@color/bg_main"
+    android:padding="16dp">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Tài liệu môn học"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:layout_constraintTop_toTopOf="parent"
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Quay lại"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Dropdown chọn môn -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Tài liệu học tập"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnBack"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSubject"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:hint="Chọn môn học"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        <AutoCompleteTextView
             android:id="@+id/actvSubject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lập trình OOP"
             android:inputType="none" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Chip lọc loại file -->
-    <HorizontalScrollView
-        android:id="@+id/scrollChips"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:paddingHorizontal="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
         app:layout_constraintTop_toBottomOf="@id/tilSubject"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupType"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAll"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleSelection="true"
-            app:selectionRequired="true">
+            android:text="Tất cả"
+            android:checked="true" />
 
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Tất cả" android:checked="true"
-                style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="PDF" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Slide" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Video" style="@style/Widget.Material3.Chip.Filter" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPdf"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PDF" />
 
-        </com.google.android.material.chip.ChipGroup>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDoc"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DOC" />
 
-    </HorizontalScrollView>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSlide"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Slide" />
+    </com.google.android.material.chip.ChipGroup>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="?attr/colorOutlineVariant"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/scrollChips"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Danh sách tài liệu -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDocuments"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingVertical="8dp"
+        android:layout_marginTop="8dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupType"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Empty state -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/layoutEmpty"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupType"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -111,14 +118,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chưa có tài liệu nào"
-            android:textSize="15sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="Chưa có tài liệu"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

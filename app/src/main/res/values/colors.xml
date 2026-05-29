@@ -16,6 +16,9 @@
     <color name="blue_gradient_start">#3B82F6</color>
     <color name="blue_gradient_end">#1D4ED8</color>
 
+    <color name="border_main">#DADDE5</color>
+    <color name="orange_primary">#F59E0B</color>
+
     <color name="teal_primary">#0D9488</color>
     <color name="teal_light">#CCFBF1</color>
 
