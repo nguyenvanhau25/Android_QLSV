@@ -33,11 +33,14 @@
         <!-- Login -->
         <activity android:name=".ui.activity.LoginActivity" android:exported="false" />
 
+        <!-- Register -->
+        <activity android:name=".ui.activity.RegisterActivity" android:exported="false" />
+
         <!-- Forgot Password -->
         <activity android:name=".ui.activity.ForgotPasswordActivity" android:exported="false" />
 
         <!-- Main (Dashboard + Bottom Nav) -->
-        <activity android:name=".ui.activity.MainActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
 
         <!-- Student Detail -->
         <activity android:name=".ui.activity.StudentDetailActivity" android:exported="false" />
@@ -59,6 +62,14 @@
 
         <!-- Subject Form -->
         <activity android:name=".ui.activity.SubjectFormActivity" android:exported="false" />
+
+        <!-- Student Area Activities -->
+        <activity android:name=".ui.activity.StudentDashboardActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentScoreActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentTimetableActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentAttendanceHistoryActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentSubjectRegisterActivity" android:exported="false" />
+        <activity android:name=".ui.activity.StudentDocumentActivity" android:exported="false" />
 
         <!-- FileProvider for export -->
         <provider

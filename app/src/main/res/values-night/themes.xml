@@ -1,11 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    THAY THẾ TOÀN BỘ file: app/src/main/res/values-night/themes.xml
+    File hiện tại có merge conflict (<<<<<<< HEAD) – xóa hết và dùng file này
+-->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-<<<<<<< HEAD
-    <style name="Base.Theme.Baiktratx1" parent="Theme.Material3.DayNight.NoActionBar">
-=======
+
+    <!-- Dark theme cho ứng dụng -->
     <style name="Base.Theme.QLSV" parent="Theme.Material3.DayNight.NoActionBar">
->>>>>>> ab56872 (first commit)
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Giữ nguyên màu primary trong dark mode -->
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#1E3A6E</item>
+        <item name="colorOnPrimaryContainer">#DBEAFE</item>
+
+        <item name="colorSecondary">@color/teal_primary</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#0D3330</item>
+        <item name="colorOnSecondaryContainer">#CCFBF1</item>
+
+        <item name="colorError">@color/red_primary</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorErrorContainer">#4A1020</item>
+        <item name="colorOnErrorContainer">#FFE4E6</item>
+
+        <!-- Surface dark -->
+        <item name="colorSurface">#1A1C1E</item>
+        <item name="colorOnSurface">#E2E2E6</item>
+        <item name="colorSurfaceVariant">#43474E</item>
+        <item name="colorOnSurfaceVariant">#C3C7CF</item>
+
+        <item name="android:windowBackground">#111318</item>
+        <item name="android:statusBarColor">@color/blue_dark</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
+
+    <style name="Theme.QLSV" parent="Base.Theme.QLSV" />
+
+    <style name="Theme.QLSV.Splash" parent="Theme.QLSV">
+        <item name="android:windowBackground">@color/blue_dark</item>
+    </style>
+
 </resources>

@@ -12,26 +12,24 @@ import androidx.fragment.app.Fragment;
 import com.example.qlsv_kthp.R;
 import com.example.qlsv_kthp.databinding.ActivityDashboardBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
+import com.example.qlsv_kthp.model.SinhVien;
 import com.example.qlsv_kthp.util.SessionManager;
 
-/**
- * Fragment hiển thị các số liệu thống kê tổng quan
- */
 public class DashboardFragment extends Fragment {
 
     private ActivityDashboardBinding binding;
     private DatabaseHelper dbHelper;
+    private SessionManager session;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ActivityDashboardBinding.inflate(inflater, container, false);
         dbHelper = new DatabaseHelper(getContext());
+        session = new SessionManager(requireContext());
 
-        // Cập nhật các con số thống kê
         updateStats();
 
-        // Ẩn thanh tiêu đề thừa nếu có trong layout
         if (binding.layoutNavBar != null) {
             binding.layoutNavBar.setVisibility(View.GONE);
         }
@@ -39,21 +37,42 @@ public class DashboardFragment extends Fragment {
         return binding.getRoot();
     }
 
-    /**
-     * Lấy dữ liệu thực tế từ Database để hiển thị lên UI
-     */
     private void updateStats() {
-        SessionManager session = new SessionManager(getContext());
-        // Chào mừng người dùng bằng tên thật
         binding.tvGreeting.setText(getString(R.string.xin_ch_o_c_u_ch, session.getFullName()));
 
-        int students = dbHelper.getCount(DatabaseHelper.TABLE_SINH_VIEN);
-        int classes = dbHelper.getCount(DatabaseHelper.TABLE_LOP);
-        int subjects = dbHelper.getCount(DatabaseHelper.TABLE_MON_HOC);
+        if (session.isAdmin()) {
+            int students = dbHelper.getCount(DatabaseHelper.TABLE_SINH_VIEN);
+            int classes = dbHelper.getCount(DatabaseHelper.TABLE_LOP);
+            int subjects = dbHelper.getCount(DatabaseHelper.TABLE_MON_HOC);
 
-        binding.tvStatStudents.setText(String.valueOf(students));
-        binding.tvStatClasses.setText(String.valueOf(classes));
-        binding.tvStatSubjects.setText(String.valueOf(subjects));
+            binding.tvStatStudents.setText(String.valueOf(students));
+            binding.tvStatClasses.setText(String.valueOf(classes));
+            binding.tvStatSubjects.setText(String.valueOf(subjects));
+            
+            // Navigate via BottomNavigationView on MainActivity
+            View.OnClickListener clickListener = v -> {
+                if (getActivity() != null) {
+                    com.google.android.material.bottomnavigation.BottomNavigationView nav = 
+                            getActivity().findViewById(R.id.bottom_navigation);
+                    if (nav != null) {
+                        if (v.getId() == R.id.tvStatStudents || ((ViewGroup)v.getParent()).getId() == R.id.tvStatStudents) {
+                            nav.setSelectedItemId(R.id.nav_students);
+                        } else if (v.getId() == R.id.tvStatSubjects || ((ViewGroup)v.getParent()).getId() == R.id.tvStatSubjects) {
+                            nav.setSelectedItemId(R.id.nav_subjects);
+                        }
+                    }
+                }
+            };
+            
+            binding.tvStatStudents.setOnClickListener(clickListener);
+            binding.tvStatSubjects.setOnClickListener(clickListener);
+            return;
+        }
+
+        SinhVien currentStudent = dbHelper.getSinhVienById(session.getMaSV());
+        binding.tvStatStudents.setText("1");
+        binding.tvStatClasses.setText(currentStudent != null && currentStudent.getTenLop() != null ? "1" : "0");
+        binding.tvStatSubjects.setText(String.valueOf(dbHelper.getCount(DatabaseHelper.TABLE_MON_HOC)));
     }
 
     @Override

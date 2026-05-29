@@ -50,7 +50,9 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
         holder.binding.tvAvatarInitials.setText(student.getInitial());
         
         // Mặc định hiển thị điểm (logic thật sẽ lấy từ Database)
-        holder.binding.tvStudentScore.setText("GPA: 0.0");
+        com.example.qlsv_kthp.db.DatabaseHelper dbHelper = new com.example.qlsv_kthp.db.DatabaseHelper(holder.itemView.getContext());
+        float gpa = dbHelper.getGPA(student.getMaSV());
+        holder.binding.tvStudentScore.setText(String.format("GPA: %.2f", gpa));
 
         // Sự kiện click vào item
         holder.itemView.setOnClickListener(v -> {

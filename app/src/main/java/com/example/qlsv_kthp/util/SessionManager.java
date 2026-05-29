@@ -5,9 +5,6 @@ import android.content.SharedPreferences;
 
 import com.example.qlsv_kthp.model.TaiKhoan;
 
-/**
- * Quản lý phiên làm việc của người dùng qua SharedPreferences
- */
 public class SessionManager {
     private static final String PREF_NAME = "QLSV_Session";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
@@ -16,20 +13,16 @@ public class SessionManager {
     private static final String KEY_FULLNAME = "fullName";
     private static final String KEY_ROLE = "role";
     private static final String KEY_MASV = "maSV";
+    private static final String KEY_AVATAR = "avatarPath";
 
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private Context context;
+    private final SharedPreferences pref;
+    private final SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
-        this.context = context;
         pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
-    /**
-     * Tạo phiên đăng nhập khi user login thành công
-     */
     public void createLoginSession(TaiKhoan user) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putInt(KEY_USER_ID, user.getId());
@@ -37,22 +30,24 @@ public class SessionManager {
         editor.putString(KEY_FULLNAME, user.getHoTen());
         editor.putString(KEY_ROLE, user.getRole());
         editor.putInt(KEY_MASV, user.getMaSV());
-        editor.commit();
+        editor.apply();
     }
 
-    /**
-     * Kiểm tra trạng thái đăng nhập
-     */
     public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
-    /**
-     * Xóa thông tin phiên khi đăng xuất
-     */
     public void logoutUser() {
         editor.clear();
-        editor.commit();
+        editor.apply();
+    }
+
+    public int getUserId() {
+        return pref.getInt(KEY_USER_ID, -1);
+    }
+
+    public String getUsername() {
+        return pref.getString(KEY_USERNAME, "");
     }
 
     public String getUserRole() {
@@ -60,11 +55,20 @@ public class SessionManager {
     }
 
     public String getFullName() {
-        return pref.getString(KEY_FULLNAME, "Người dùng");
+        return pref.getString(KEY_FULLNAME, "Nguoi dung");
     }
 
     public int getMaSV() {
         return pref.getInt(KEY_MASV, -1);
+    }
+
+    public void setAvatarPath(String path) {
+        editor.putString(KEY_AVATAR, path);
+        editor.apply();
+    }
+
+    public String getAvatarPath() {
+        return pref.getString(KEY_AVATAR, "");
     }
 
     public boolean isAdmin() {
