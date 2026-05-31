@@ -62,6 +62,9 @@
 
         <!-- Subject Form -->
         <activity android:name=".ui.activity.SubjectFormActivity" android:exported="false" />
+        
+        <!-- Subject Detail -->
+        <activity android:name=".ui.activity.SubjectDetailActivity" android:exported="false" />
 
         <!-- Student Area Activities -->
         <activity android:name=".ui.activity.StudentDashboardActivity" android:exported="false" />

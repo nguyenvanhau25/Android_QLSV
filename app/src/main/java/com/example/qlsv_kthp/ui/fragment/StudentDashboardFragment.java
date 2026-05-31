@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.qlsv_kthp.databinding.FragmentStudentDashboardBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
 import com.example.qlsv_kthp.ui.activity.ProfileActivity;
+import com.example.qlsv_kthp.ui.activity.StudentDocumentActivity;
 import com.example.qlsv_kthp.ui.activity.StudentScoreActivity;
 import com.example.qlsv_kthp.ui.activity.StudentSubjectRegisterActivity;
 import com.example.qlsv_kthp.ui.activity.StudentTimetableActivity;
@@ -70,6 +71,14 @@ public class StudentDashboardFragment extends Fragment {
             
         binding.cardProfile.setOnClickListener(v -> 
             startActivity(new Intent(getActivity(), ProfileActivity.class)));
+
+        // Mở tài liệu môn học khi nhấn vào thống kê môn học
+        binding.cardSubjectStats.setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), StudentDocumentActivity.class)));
+            
+        // Mở bảng điểm khi nhấn vào GPA
+        binding.cardGpa.setOnClickListener(v -> 
+            startActivity(new Intent(getActivity(), StudentScoreActivity.class)));
     }
 
     @Override

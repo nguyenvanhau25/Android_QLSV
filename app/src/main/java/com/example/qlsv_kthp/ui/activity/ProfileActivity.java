@@ -3,12 +3,14 @@ package com.example.qlsv_kthp.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qlsv_kthp.databinding.ActivityProfileBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
+import com.example.qlsv_kthp.model.SinhVien;
 import com.example.qlsv_kthp.model.TaiKhoan;
 import com.example.qlsv_kthp.util.SessionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -32,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         binding.btnAccountInfo.setOnClickListener(v -> showAccountInfo());
         binding.btnChangePassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
-        binding.btnCreateNotification.setVisibility(session.isAdmin() ? android.view.View.VISIBLE : android.view.View.GONE);
+        binding.btnCreateNotification.setVisibility(session.isAdmin() ? View.VISIBLE : View.GONE);
         binding.btnCreateNotification.setOnClickListener(v -> {
             android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
             layout.setOrientation(android.widget.LinearLayout.VERTICAL);
@@ -65,15 +67,32 @@ public class ProfileActivity extends AppCompatActivity {
                     .setNegativeButton("Hủy", null)
                     .show();
         });
-        binding.btnDemoAccounts.setVisibility(android.view.View.GONE);
+        binding.btnDemoAccounts.setVisibility(View.GONE);
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
     }
 
     private void bindProfile() {
         String name = session.getFullName();
         binding.tvFullName.setText(name);
-        binding.tvUserRole.setText(session.isAdmin() ? "Giảng viên / Quản trị" : "Sinh viên");
-        binding.tvUserMeta.setText(session.isAdmin() ? "Tài khoản hệ thống" : "Hồ sơ cá nhân");
+        
+        if (session.isAdmin()) {
+            binding.tvUserRole.setText("Giảng viên / Quản trị");
+            binding.tvUserMeta.setText("Tài khoản hệ thống");
+        } else {
+            binding.tvUserRole.setText("Sinh viên");
+            // Hiển thị tên lớp thay vì văn bản tĩnh
+            SinhVien sv = dbHelper.getSinhVienById(session.getMaSV());
+            if (sv != null && sv.getTenLop() != null) {
+                binding.tvUserMeta.setText("Lớp: " + sv.getTenLop());
+                // Thiết lập click để xem tài liệu
+                binding.tvUserMeta.setOnClickListener(v -> 
+                    startActivity(new Intent(this, StudentDocumentActivity.class)));
+                // Làm cho text trông như có thể nhấn được
+                binding.tvUserMeta.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+            } else {
+                binding.tvUserMeta.setText("Chưa xếp lớp");
+            }
+        }
 
         if (!TextUtils.isEmpty(name)) {
             String[] parts = name.trim().split("\\s+");
