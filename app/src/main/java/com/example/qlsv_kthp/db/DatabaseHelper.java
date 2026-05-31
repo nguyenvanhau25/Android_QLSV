@@ -26,7 +26,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "QLSV.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 11;
 
     public static final String TABLE_TAI_KHOAN = "TAIKHOAN";
     public static final String TABLE_SINH_VIEN = "SINHVIEN";
@@ -140,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 4) {
+        if (oldVersion < 11) {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_KHOAN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SINH_VIEN);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOP);
@@ -154,11 +154,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+//    private void insertSampleData(SQLiteDatabase db) {
+//        ContentValues v = new ContentValues();
+//        v.put("tenLop", "CNTT K18");
+//        v.put("khoaHoc", "2023-2027");
+//        long lopId = db.insert(TABLE_LOP, null, v);
+//
+//        ContentValues sv = new ContentValues();
+//        sv.put("hoTen", "Nguyễn Văn An");
+//        sv.put("ngaySinh", "01/01/2004");
+//        sv.put("gioiTinh", "Nam");
+//        sv.put("email", "sv01@qlsv.com");
+//        sv.put("soDienThoai", "0987654321");
+//        sv.put("diaChi", "Hà Nội");
+//        sv.put("maLop", lopId);
+//        long maSV = db.insert(TABLE_SINH_VIEN, null, sv);
+//
+//        ContentValues user = new ContentValues();
+//        user.put("hoTen", "Nguyễn Văn An");
+//        user.put("role", "student");
+//        user.put("username", "sv01");
+//        user.put("password", SecurityUtils.sha256("123456"));
+//        user.put("email", "sv01@qlsv.com");
+//        user.put("maSV", maSV);
+//        db.insert(TABLE_TAI_KHOAN, null, user);
+//    }
+
     private void insertSampleData(SQLiteDatabase db) {
         ContentValues v = new ContentValues();
         v.put("tenLop", "CNTT K18");
         v.put("khoaHoc", "2023-2027");
         long lopId = db.insert(TABLE_LOP, null, v);
+
+        ContentValues admin = new ContentValues();
+        admin.put("hoTen", "Admin User");
+        admin.put("role", "admin");
+        admin.put("username", "admin");
+        admin.put("password", SecurityUtils.sha256("admin123"));
+        admin.put("email", "admin@qlsv.com");
+        admin.put("maSV", -1);
+        db.insert(TABLE_TAI_KHOAN, null, admin);
 
         ContentValues sv = new ContentValues();
         sv.put("hoTen", "Nguyễn Văn An");
@@ -178,6 +213,296 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         user.put("email", "sv01@qlsv.com");
         user.put("maSV", maSV);
         db.insert(TABLE_TAI_KHOAN, null, user);
+
+        ContentValues mh = new ContentValues();
+        mh.put(COL_MH_TEN, "Java nâng cao");
+        mh.put(COL_MH_GV, "GV Nguyễn Văn B");
+        mh.put(COL_MH_TINCHI, 3);
+        mh.put(COL_MH_LICHHOC, "Thứ 2 - Tiết 1-3");
+        mh.put(COL_MH_TAILIEU, "Tài liệu Java");
+        mh.put(COL_MH_SOLUONGMAX, 65);
+        long maMH = db.insert(TABLE_MON_HOC, null, mh);
+
+        ContentValues diem = new ContentValues();
+        diem.put("maSV", maSV);
+        diem.put("maMH", maMH);
+        diem.put("hocKy", "HK1-2025");
+        diem.put("diemGiuaKy", 8);
+        diem.put("diemCuoiKy", 9);
+        diem.put("diemBaiTap", 8);
+        db.insert(TABLE_DIEM, null, diem);
+
+        // Thứ 2
+        ContentValues tkb1 = new ContentValues();
+        tkb1.put("maSV", maSV);
+        tkb1.put("maMH", maMH);
+        tkb1.put("thu", 2);
+        tkb1.put("tietBatDau", 1);
+        tkb1.put("tietKetThuc", 3);
+        tkb1.put("phongHoc", "A101");
+        tkb1.put("tenGiangVien", "GV Nguyễn Văn B");
+        tkb1.put("tuan", "14/04/2026 - 19/04/2026");
+        db.insert(TABLE_THOI_KHOA_BIEU, null, tkb1);
+
+// Thứ 4
+        ContentValues tkb2 = new ContentValues();
+        tkb2.put("maSV", maSV);
+        tkb2.put("maMH", maMH);
+        tkb2.put("thu", 4);
+        tkb2.put("tietBatDau", 4);
+        tkb2.put("tietKetThuc", 6);
+        tkb2.put("phongHoc", "A102");
+        tkb2.put("tenGiangVien", "GV Nguyễn Văn B");
+        tkb2.put("tuan", "14/04/2026 - 19/04/2026");
+        db.insert(TABLE_THOI_KHOA_BIEU, null, tkb2);
+
+        // ================== MÔN HỌC 2 ==================
+        ContentValues mh2 = new ContentValues();
+        mh2.put(COL_MH_TEN, "Lập trình Android");
+        mh2.put(COL_MH_GV, "GV Trần Văn C");
+        mh2.put(COL_MH_TINCHI, 3);
+        mh2.put(COL_MH_LICHHOC, "Thứ 3 - Tiết 4-6");
+        mh2.put(COL_MH_TAILIEU, "Android Studio");
+        long maMH2 = db.insert(TABLE_MON_HOC, null, mh2);
+
+// ================== MÔN HỌC 3 ==================
+        ContentValues mh3 = new ContentValues();
+        mh3.put(COL_MH_TEN, "Cơ sở dữ liệu");
+        mh3.put(COL_MH_GV, "GV Lê Thị D");
+        mh3.put(COL_MH_TINCHI, 4);
+        mh3.put(COL_MH_LICHHOC, "Thứ 5 - Tiết 1-3");
+        mh3.put(COL_MH_TAILIEU, "SQL Server");
+        long maMH3 = db.insert(TABLE_MON_HOC, null, mh3);
+
+        // Android
+        ContentValues tkb3 = new ContentValues();
+        tkb3.put("maSV", maSV);
+        tkb3.put("maMH", maMH2);
+        tkb3.put("thu", 3);
+        tkb3.put("tietBatDau", 4);
+        tkb3.put("tietKetThuc", 6);
+        tkb3.put("phongHoc", "B201");
+        tkb3.put("tenGiangVien", "GV Trần Văn C");
+        tkb3.put("tuan", "14/04/2026 - 19/04/2026");
+        db.insert(TABLE_THOI_KHOA_BIEU, null, tkb3);
+
+// CSDL
+        ContentValues tkb4 = new ContentValues();
+        tkb4.put("maSV", maSV);
+        tkb4.put("maMH", maMH3);
+        tkb4.put("thu", 5);
+        tkb4.put("tietBatDau", 1);
+        tkb4.put("tietKetThuc", 3);
+        tkb4.put("phongHoc", "C301");
+        tkb4.put("tenGiangVien", "GV Lê Thị D");
+        tkb4.put("tuan", "14/04/2026 - 19/04/2026");
+        db.insert(TABLE_THOI_KHOA_BIEU, null, tkb4);
+
+        ContentValues diem2 = new ContentValues();
+        diem2.put("maSV", maSV);
+        diem2.put("maMH", maMH2);
+        diem2.put("hocKy", "HK1-2025");
+        diem2.put("diemGiuaKy", 7.5);
+        diem2.put("diemCuoiKy", 8.5);
+        diem2.put("diemBaiTap", 9);
+        db.insert(TABLE_DIEM, null, diem2);
+
+        ContentValues diem3 = new ContentValues();
+        diem3.put("maSV", maSV);
+        diem3.put("maMH", maMH3);
+        diem3.put("hocKy", "HK1-2025");
+        diem3.put("diemGiuaKy", 8);
+        diem3.put("diemCuoiKy", 8);
+        diem3.put("diemBaiTap", 10);
+        db.insert(TABLE_DIEM, null, diem3);
+
+        ContentValues dd1 = new ContentValues();
+        dd1.put("maSV", maSV);
+        dd1.put("maMH", maMH);
+        dd1.put("ngay", "14/04/2026");
+        dd1.put("trangThai", 1);
+        db.insert(TABLE_DIEM_DANH, null, dd1);
+
+        ContentValues dd2 = new ContentValues();
+        dd2.put("maSV", maSV);
+        dd2.put("maMH", maMH2);
+        dd2.put("ngay", "15/04/2026");
+        dd2.put("trangThai", 1);
+        db.insert(TABLE_DIEM_DANH, null, dd2);
+
+        ContentValues dd3 = new ContentValues();
+        dd3.put("maSV", maSV);
+        dd3.put("maMH", maMH3);
+        dd3.put("ngay", "16/04/2026");
+        dd3.put("trangThai", 0);
+        db.insert(TABLE_DIEM_DANH, null, dd3);
+
+        ContentValues tb2 = new ContentValues();
+        tb2.put("tieuDe", "Lịch thi giữa kỳ");
+        tb2.put("noiDung", "Sinh viên theo dõi lịch thi trên hệ thống.");
+        tb2.put("ngayTao", "12/04/2026 09:00");
+        tb2.put("daDoc", 0);
+        tb2.put("loai", "exam");
+        db.insert(TABLE_THONG_BAO, null, tb2);
+
+        ContentValues tb3 = new ContentValues();
+        tb3.put("tieuDe", "Nộp bài tập Android");
+        tb3.put("noiDung", "Hạn nộp trước ngày 20/04/2026.");
+        tb3.put("ngayTao", "13/04/2026 10:30");
+        tb3.put("daDoc", 0);
+        tb3.put("loai", "assignment");
+        db.insert(TABLE_THONG_BAO, null, tb3);
+
+        ContentValues tb = new ContentValues();
+        tb.put("tieuDe", "Chào mừng bạn");
+        tb.put("noiDung", "Chào mừng bạn đến với hệ thống quản lý sinh viên.");
+        tb.put("ngayTao", "01/01/2026 08:00");
+        tb.put("daDoc", 0);
+        tb.put("loai", "general");
+        db.insert(TABLE_THONG_BAO, null, tb);
+
+        // ================== SV02 ==================
+        ContentValues sv2 = new ContentValues();
+        sv2.put("hoTen", "Trần Thị Mai");
+        sv2.put("ngaySinh", "12/03/2004");
+        sv2.put("gioiTinh", "Nữ");
+        sv2.put("email", "sv02@qlsv.com");
+        sv2.put("soDienThoai", "0911111111");
+        sv2.put("diaChi", "Hải Phòng");
+        sv2.put("maLop", lopId);
+        long maSV2 = db.insert(TABLE_SINH_VIEN, null, sv2);
+
+        ContentValues tk2 = new ContentValues();
+        tk2.put("hoTen", "Trần Thị Mai");
+        tk2.put("role", "student");
+        tk2.put("username", "sv02");
+        tk2.put("password", SecurityUtils.sha256("123456"));
+        tk2.put("email", "sv02@qlsv.com");
+        tk2.put("maSV", maSV2);
+        db.insert(TABLE_TAI_KHOAN, null, tk2);
+
+// ================== SV03 ==================
+        ContentValues sv3 = new ContentValues();
+        sv3.put("hoTen", "Lê Văn Nam");
+        sv3.put("ngaySinh", "20/08/2004");
+        sv3.put("gioiTinh", "Nam");
+        sv3.put("email", "sv03@qlsv.com");
+        sv3.put("soDienThoai", "0922222222");
+        sv3.put("diaChi", "Nam Định");
+        sv3.put("maLop", lopId);
+        long maSV3 = db.insert(TABLE_SINH_VIEN, null, sv3);
+
+        ContentValues tk3 = new ContentValues();
+        tk3.put("hoTen", "Lê Văn Nam");
+        tk3.put("role", "student");
+        tk3.put("username", "sv03");
+        tk3.put("password", SecurityUtils.sha256("123456"));
+        tk3.put("email", "sv03@qlsv.com");
+        tk3.put("maSV", maSV3);
+        db.insert(TABLE_TAI_KHOAN, null, tk3);
+
+// ================== SV04 ==================
+        ContentValues sv4 = new ContentValues();
+        sv4.put("hoTen", "Phạm Minh Đức");
+        sv4.put("ngaySinh", "05/11/2004");
+        sv4.put("gioiTinh", "Nam");
+        sv4.put("email", "sv04@qlsv.com");
+        sv4.put("soDienThoai", "0933333333");
+        sv4.put("diaChi", "Hà Nội");
+        sv4.put("maLop", lopId);
+        long maSV4 = db.insert(TABLE_SINH_VIEN, null, sv4);
+
+        ContentValues tk4 = new ContentValues();
+        tk4.put("hoTen", "Phạm Minh Đức");
+        tk4.put("role", "student");
+        tk4.put("username", "sv04");
+        tk4.put("password", SecurityUtils.sha256("123456"));
+        tk4.put("email", "sv04@qlsv.com");
+        tk4.put("maSV", maSV4);
+        db.insert(TABLE_TAI_KHOAN, null, tk4);
+
+// ================== SV05 ==================
+        ContentValues sv5 = new ContentValues();
+        sv5.put("hoTen", "Nguyễn Thu Hà");
+        sv5.put("ngaySinh", "15/01/2004");
+        sv5.put("gioiTinh", "Nữ");
+        sv5.put("email", "sv05@qlsv.com");
+        sv5.put("soDienThoai", "0944444444");
+        sv5.put("diaChi", "Quảng Ninh");
+        sv5.put("maLop", lopId);
+        long maSV5 = db.insert(TABLE_SINH_VIEN, null, sv5);
+
+        ContentValues tk5 = new ContentValues();
+        tk5.put("hoTen", "Nguyễn Thu Hà");
+        tk5.put("role", "student");
+        tk5.put("username", "sv05");
+        tk5.put("password", SecurityUtils.sha256("123456"));
+        tk5.put("email", "sv05@qlsv.com");
+        tk5.put("maSV", maSV5);
+        db.insert(TABLE_TAI_KHOAN, null, tk5);
+
+// ================== SV06 ==================
+        ContentValues sv6 = new ContentValues();
+        sv6.put("hoTen", "Đỗ Quốc Huy");
+        sv6.put("ngaySinh", "30/06/2004");
+        sv6.put("gioiTinh", "Nam");
+        sv6.put("email", "sv06@qlsv.com");
+        sv6.put("soDienThoai", "0955555555");
+        sv6.put("diaChi", "Bắc Ninh");
+        sv6.put("maLop", lopId);
+        long maSV6 = db.insert(TABLE_SINH_VIEN, null, sv6);
+
+        ContentValues tk6 = new ContentValues();
+        tk6.put("hoTen", "Đỗ Quốc Huy");
+        tk6.put("role", "student");
+        tk6.put("username", "sv06");
+        tk6.put("password", SecurityUtils.sha256("123456"));
+        tk6.put("email", "sv06@qlsv.com");
+        tk6.put("maSV", maSV6);
+        db.insert(TABLE_TAI_KHOAN, null, tk6);
+
+        // SV02
+        insertDiem(db, maSV2, maMH, 8.0, 8.5, 9.0);
+        insertDiem(db, maSV2, maMH2, 7.5, 8.0, 8.5);
+        insertDiem(db, maSV2, maMH3, 9.0, 9.5, 9.0);
+
+// SV03
+        insertDiem(db, maSV3, maMH, 6.5, 7.0, 8.0);
+        insertDiem(db, maSV3, maMH2, 7.0, 7.5, 7.0);
+        insertDiem(db, maSV3, maMH3, 8.0, 8.0, 8.5);
+
+// SV04
+        insertDiem(db, maSV4, maMH, 9.0, 9.5, 10.0);
+        insertDiem(db, maSV4, maMH2, 8.5, 9.0, 9.5);
+        insertDiem(db, maSV4, maMH3, 9.0, 9.0, 9.0);
+
+// SV05
+        insertDiem(db, maSV5, maMH, 7.0, 7.5, 8.0);
+        insertDiem(db, maSV5, maMH2, 8.0, 8.0, 8.0);
+        insertDiem(db, maSV5, maMH3, 7.5, 8.5, 8.5);
+
+// SV06
+        insertDiem(db, maSV6, maMH, 5.5, 6.5, 7.0);
+        insertDiem(db, maSV6, maMH2, 6.0, 7.0, 7.5);
+        insertDiem(db, maSV6, maMH3, 7.0, 7.5, 8.0);
+    }
+
+    private void insertDiem(SQLiteDatabase db,
+                            long maSV,
+                            long maMH,
+                            double gk,
+                            double ck,
+                            double bt) {
+
+        ContentValues diem = new ContentValues();
+        diem.put("maSV", maSV);
+        diem.put("maMH", maMH);
+        diem.put("hocKy", "HK1-2025");
+        diem.put("diemGiuaKy", gk);
+        diem.put("diemCuoiKy", ck);
+        diem.put("diemBaiTap", bt);
+
+        db.insert(TABLE_DIEM, null, diem);
     }
 
     // --- SINH VIÊN QUERIES ---
@@ -710,7 +1035,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("password", newHashedPassword);
-        return db.update(TABLE_TAI_KHOAN, values, "id = ? AND password = ?", 
+        return db.update(TABLE_TAI_KHOAN, values, "id = ? AND password = ?",
                 new String[]{String.valueOf(userId), oldHashedPassword}) > 0;
     }
 
