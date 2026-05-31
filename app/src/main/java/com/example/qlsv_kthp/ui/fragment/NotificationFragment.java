@@ -1,5 +1,6 @@
 package com.example.qlsv_kthp.ui.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.qlsv_kthp.databinding.ActivityNotificationBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
 import com.example.qlsv_kthp.model.ThongBao;
 import com.example.qlsv_kthp.ui.activity.NotificationDetailActivity;
+import com.example.qlsv_kthp.ui.activity.NotificationFormActivity;
 import com.example.qlsv_kthp.util.SessionManager;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public class NotificationFragment extends Fragment {
     private ActivityNotificationBinding binding;
     private DatabaseHelper dbHelper;
     private SessionManager session;
+    private static final int REQUEST_CODE_FORM = 101;
 
     @Nullable
     @Override
@@ -52,6 +55,17 @@ public class NotificationFragment extends Fragment {
         binding.rvNotifications.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         binding.btnMarkAllRead.setOnClickListener(v -> markAllNotificationsAsRead());
+
+        // Hiển thị nút thêm thông báo nếu là Admin
+        if (session.isAdmin()) {
+            binding.btnAddNotification.setVisibility(View.VISIBLE);
+            binding.btnAddNotification.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), NotificationFormActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_FORM);
+            });
+        } else {
+            binding.btnAddNotification.setVisibility(View.GONE);
+        }
     }
 
     private void loadNotifications() {
@@ -135,7 +149,12 @@ public class NotificationFragment extends Fragment {
                 .setTitle("Quản lý thông báo")
                 .setItems(new String[]{"Sửa thông báo", "Xóa thông báo"}, (dialog, which) -> {
                     if (which == 0) {
-                        Toast.makeText(requireContext(), "Chức năng sửa đang cập nhật", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(requireContext(), NotificationFormActivity.class);
+                        intent.putExtra("maThongBao", tb.getMaThongBao());
+                        intent.putExtra("tieuDe", tb.getTieuDe());
+                        intent.putExtra("noiDung", tb.getNoiDung());
+                        intent.putExtra("loai", tb.getLoai());
+                        startActivityForResult(intent, REQUEST_CODE_FORM);
                     } else {
                         confirmDelete(tb);
                     }
@@ -148,16 +167,24 @@ public class NotificationFragment extends Fragment {
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc chắn muốn xóa thông báo này?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    /*
-                     * Nếu DatabaseHelper có hàm xóa thì dùng:
-                     * dbHelper.deleteThongBao(tb.getMaThongBao());
-                     */
-
-                    Toast.makeText(requireContext(), "Đã xóa thông báo", Toast.LENGTH_SHORT).show();
-                    loadNotifications();
+                    int rows = dbHelper.deleteThongBao(tb.getMaThongBao());
+                    if (rows > 0) {
+                        Toast.makeText(requireContext(), "Đã xóa thông báo", Toast.LENGTH_SHORT).show();
+                        loadNotifications();
+                    } else {
+                        Toast.makeText(requireContext(), "Không thể xóa thông báo", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_FORM && resultCode == Activity.RESULT_OK) {
+            loadNotifications();
+        }
     }
 
     @Override

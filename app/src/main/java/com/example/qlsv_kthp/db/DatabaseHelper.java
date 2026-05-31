@@ -154,32 +154,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-//    private void insertSampleData(SQLiteDatabase db) {
-//        ContentValues v = new ContentValues();
-//        v.put("tenLop", "CNTT K18");
-//        v.put("khoaHoc", "2023-2027");
-//        long lopId = db.insert(TABLE_LOP, null, v);
-//
-//        ContentValues sv = new ContentValues();
-//        sv.put("hoTen", "Nguyễn Văn An");
-//        sv.put("ngaySinh", "01/01/2004");
-//        sv.put("gioiTinh", "Nam");
-//        sv.put("email", "sv01@qlsv.com");
-//        sv.put("soDienThoai", "0987654321");
-//        sv.put("diaChi", "Hà Nội");
-//        sv.put("maLop", lopId);
-//        long maSV = db.insert(TABLE_SINH_VIEN, null, sv);
-//
-//        ContentValues user = new ContentValues();
-//        user.put("hoTen", "Nguyễn Văn An");
-//        user.put("role", "student");
-//        user.put("username", "sv01");
-//        user.put("password", SecurityUtils.sha256("123456"));
-//        user.put("email", "sv01@qlsv.com");
-//        user.put("maSV", maSV);
-//        db.insert(TABLE_TAI_KHOAN, null, user);
-//    }
-
     private void insertSampleData(SQLiteDatabase db) {
         ContentValues v = new ContentValues();
         v.put("tenLop", "CNTT K18");
@@ -244,7 +218,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tkb1.put("tuan", "14/04/2026 - 19/04/2026");
         db.insert(TABLE_THOI_KHOA_BIEU, null, tkb1);
 
-// Thứ 4
+        // Thứ 4
         ContentValues tkb2 = new ContentValues();
         tkb2.put("maSV", maSV);
         tkb2.put("maMH", maMH);
@@ -265,7 +239,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         mh2.put(COL_MH_TAILIEU, "Android Studio");
         long maMH2 = db.insert(TABLE_MON_HOC, null, mh2);
 
-// ================== MÔN HỌC 3 ==================
+        // ================== MÔN HỌC 3 ==================
         ContentValues mh3 = new ContentValues();
         mh3.put(COL_MH_TEN, "Cơ sở dữ liệu");
         mh3.put(COL_MH_GV, "GV Lê Thị D");
@@ -286,7 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tkb3.put("tuan", "14/04/2026 - 19/04/2026");
         db.insert(TABLE_THOI_KHOA_BIEU, null, tkb3);
 
-// CSDL
+        // CSDL
         ContentValues tkb4 = new ContentValues();
         tkb4.put("maSV", maSV);
         tkb4.put("maMH", maMH3);
@@ -381,7 +355,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tk2.put("maSV", maSV2);
         db.insert(TABLE_TAI_KHOAN, null, tk2);
 
-// ================== SV03 ==================
+        // ================== SV03 ==================
         ContentValues sv3 = new ContentValues();
         sv3.put("hoTen", "Lê Văn Nam");
         sv3.put("ngaySinh", "20/08/2004");
@@ -401,7 +375,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tk3.put("maSV", maSV3);
         db.insert(TABLE_TAI_KHOAN, null, tk3);
 
-// ================== SV04 ==================
+        // ================== SV04 ==================
         ContentValues sv4 = new ContentValues();
         sv4.put("hoTen", "Phạm Minh Đức");
         sv4.put("ngaySinh", "05/11/2004");
@@ -421,7 +395,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tk4.put("maSV", maSV4);
         db.insert(TABLE_TAI_KHOAN, null, tk4);
 
-// ================== SV05 ==================
+        // ================== SV05 ==================
         ContentValues sv5 = new ContentValues();
         sv5.put("hoTen", "Nguyễn Thu Hà");
         sv5.put("ngaySinh", "15/01/2004");
@@ -441,7 +415,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tk5.put("maSV", maSV5);
         db.insert(TABLE_TAI_KHOAN, null, tk5);
 
-// ================== SV06 ==================
+        // ================== SV06 ==================
         ContentValues sv6 = new ContentValues();
         sv6.put("hoTen", "Đỗ Quốc Huy");
         sv6.put("ngaySinh", "30/06/2004");
@@ -466,22 +440,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertDiem(db, maSV2, maMH2, 7.5, 8.0, 8.5);
         insertDiem(db, maSV2, maMH3, 9.0, 9.5, 9.0);
 
-// SV03
+        // SV03
         insertDiem(db, maSV3, maMH, 6.5, 7.0, 8.0);
         insertDiem(db, maSV3, maMH2, 7.0, 7.5, 7.0);
         insertDiem(db, maSV3, maMH3, 8.0, 8.0, 8.5);
 
-// SV04
+        // SV04
         insertDiem(db, maSV4, maMH, 9.0, 9.5, 10.0);
         insertDiem(db, maSV4, maMH2, 8.5, 9.0, 9.5);
         insertDiem(db, maSV4, maMH3, 9.0, 9.0, 9.0);
 
-// SV05
+        // SV05
         insertDiem(db, maSV5, maMH, 7.0, 7.5, 8.0);
         insertDiem(db, maSV5, maMH2, 8.0, 8.0, 8.0);
         insertDiem(db, maSV5, maMH3, 7.5, 8.5, 8.5);
 
-// SV06
+        // SV06
         insertDiem(db, maSV6, maMH, 5.5, 6.5, 7.0);
         insertDiem(db, maSV6, maMH2, 6.0, 7.0, 7.5);
         insertDiem(db, maSV6, maMH3, 7.0, 7.5, 8.0);
@@ -671,7 +645,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Lấy danh sách môn học sinh viên đã đăng ký
-     */    public List<MonHoc> getRegisteredSubjects(int maSV) {
+     */
+    public List<MonHoc> getRegisteredSubjects(int maSV) {
         List<MonHoc> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT m.* FROM " + TABLE_MON_HOC + " m " +
@@ -919,6 +894,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("daDoc", tb.getDaDoc());
         values.put("loai", tb.getLoai());
         return db.insert(TABLE_THONG_BAO, null, values);
+    }
+
+    /**
+     * Cập nhật thông báo
+     */
+    public int updateThongBao(ThongBao tb) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("tieuDe", tb.getTieuDe());
+        values.put("noiDung", tb.getNoiDung());
+        values.put("loai", tb.getLoai());
+        return db.update(TABLE_THONG_BAO, values, "maThongBao = ?", new String[]{String.valueOf(tb.getMaThongBao())});
     }
 
     /**

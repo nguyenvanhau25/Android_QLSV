@@ -56,6 +56,9 @@
 
         <!-- Notification Detail -->
         <activity android:name=".ui.activity.NotificationDetailActivity" android:exported="false" />
+        
+        <!-- Notification Form -->
+        <activity android:name=".ui.activity.NotificationFormActivity" android:exported="false" />
 
         <!-- Profile / Change Password -->
         <activity android:name=".ui.activity.ProfileActivity" android:exported="false" />
