@@ -7,9 +7,9 @@ public class ThongBao {
     private int maThongBao;
     private String tieuDe;
     private String noiDung;
-    private String ngayTao; // dd/MM/yyyy HH:mm
-    private int daDoc; // 0 = chưa đọc, 1 = đã đọc
-    private String loai; // "general", "score", "attendance"
+    private String ngayTao;
+    private int daDoc;
+    private String loai;
 
     public ThongBao() {}
 
