@@ -3,7 +3,6 @@ package com.example.qlsv_kthp.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +29,8 @@ public class StudentTimetableActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private DayHeaderAdapter headerAdapter;
-    private List<String> dayNames;
+    private Calendar currentWeekCalendar;
+    private List<String> dayLabels;
     private List<String> dateStrings;
 
     @Override
@@ -42,36 +42,40 @@ public class StudentTimetableActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
         session = new SessionManager(this);
+        currentWeekCalendar = Calendar.getInstance();
+        currentWeekCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         binding.toolbar.setNavigationOnClickListener(v -> finish());
 
-        binding.btnExportPdf.setOnClickListener(v ->
-                Toast.makeText(this, "Tính năng Xuất PDF đang được phát triển", Toast.LENGTH_SHORT).show()
-        );
-
+        setupWeekNavigation();
         setupTimetable();
     }
 
-    private void setupTimetable() {
-        calculateCurrentWeekDates();
+    private void setupWeekNavigation() {
+        binding.btnPrevWeek.setOnClickListener(v -> {
+            currentWeekCalendar.add(Calendar.WEEK_OF_YEAR, -1);
+            updateWeekUI();
+        });
 
-        headerAdapter = new DayHeaderAdapter(dayNames, dateStrings, position ->
+        binding.btnNextWeek.setOnClickListener(v -> {
+            currentWeekCalendar.add(Calendar.WEEK_OF_YEAR, 1);
+            updateWeekUI();
+        });
+    }
+
+    private void setupTimetable() {
+        dayLabels = new ArrayList<>();
+        dateStrings = new ArrayList<>();
+        
+        headerAdapter = new DayHeaderAdapter(dayLabels, dateStrings, position ->
                 binding.vpDays.setCurrentItem(position)
         );
 
         binding.rvDayHeaders.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         );
-
         binding.rvDayHeaders.setAdapter(headerAdapter);
         binding.vpDays.setAdapter(new SchedulePagerAdapter());
-
-        // Tự động cuộn đến ngày hiện tại
-        Calendar calendar = Calendar.getInstance();
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // Sunday = 1, Monday = 2...
-        int currentPos = (dayOfWeek == Calendar.SUNDAY) ? 6 : dayOfWeek - 2;
-        binding.vpDays.setCurrentItem(currentPos, false);
-        headerAdapter.setSelectedPosition(currentPos);
 
         binding.vpDays.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -81,51 +85,65 @@ public class StudentTimetableActivity extends AppCompatActivity {
                 binding.rvDayHeaders.smoothScrollToPosition(position);
             }
         });
-    }
 
-    private void calculateCurrentWeekDates() {
-        dayNames = new ArrayList<>();
-        dateStrings = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        updateWeekUI();
         
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-
-        String[] shortDays = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
-
-        for (int i = 0; i < 7; i++) {
-            dayNames.add(shortDays[i]);
-            dateStrings.add(sdf.format(cal.getTime()));
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+        // Mặc định nhảy tới ngày hiện tại nếu đang ở tuần hiện tại
+        Calendar today = Calendar.getInstance();
+        if (isSameWeek(today, currentWeekCalendar)) {
+            int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
+            int pos = (dayOfWeek == Calendar.SUNDAY) ? 6 : dayOfWeek - 2;
+            binding.vpDays.setCurrentItem(pos, false);
         }
     }
 
-    private class SchedulePagerAdapter extends RecyclerView.Adapter<SchedulePagerAdapter.ViewHolder> {
+    private void updateWeekUI() {
+        dayLabels.clear();
+        dateStrings.clear();
 
+        Calendar cal = (Calendar) currentWeekCalendar.clone();
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        String weekStart = sdfDate.format(cal.getTime());
+
+        String[] labels = {"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
+        for (int i = 0; i < 7; i++) {
+            dayLabels.add(labels[i]);
+            dateStrings.add(sdfDate.format(cal.getTime()));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        String weekEnd = sdfDate.format(cal.getTime());
+        binding.tvWeekRange.setText(weekStart + " - " + weekEnd);
+
+        headerAdapter.notifyDataSetChanged();
+        // Refresh pager content
+        binding.vpDays.getAdapter().notifyDataSetChanged();
+    }
+
+    private boolean isSameWeek(Calendar cal1, Calendar cal2) {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+               cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    private class SchedulePagerAdapter extends RecyclerView.Adapter<SchedulePagerAdapter.ViewHolder> {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            RecyclerView recyclerView = new RecyclerView(parent.getContext());
-            recyclerView.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            ));
-            recyclerView.setLayoutManager(new LinearLayoutManager(parent.getContext()));
-            recyclerView.setPadding(0, 16, 0, 80);
-            recyclerView.setClipToPadding(false);
-            return new ViewHolder(recyclerView);
+            RecyclerView rv = new RecyclerView(parent.getContext());
+            rv.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+            rv.setLayoutManager(new LinearLayoutManager(parent.getContext()));
+            rv.setPadding(0, 16, 0, 100);
+            rv.setClipToPadding(false);
+            return new ViewHolder(rv);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            // DB lưu Thứ 2 là 2, Thứ 3 là 3... Chủ Nhật là 8
-            int thu = position + 2;
+            int thu = position + 2; // T2=2...CN=8
             List<ThoiKhoaBieu> schedule = dbHelper.getTKBBySinhVienAndThu(session.getMaSV(), thu);
-            
-            if (schedule == null || schedule.isEmpty()) {
-                // Có thể thêm view "Trống" ở đây nếu muốn
-            }
             holder.rv.setAdapter(new TimetableSlotAdapter(schedule));
         }
 
@@ -136,10 +154,7 @@ public class StudentTimetableActivity extends AppCompatActivity {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             RecyclerView rv;
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                rv = (RecyclerView) itemView;
-            }
+            ViewHolder(View v) { super(v); rv = (RecyclerView) v; }
         }
     }
 }
