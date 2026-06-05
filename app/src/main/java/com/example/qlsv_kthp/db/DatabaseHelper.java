@@ -39,6 +39,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_THOI_KHOA_BIEU = "THOIKHOABIEU";
     public static final String TABLE_TAI_LIEU = "TAILIEU";
 
+    // Lớp Columns
+    public static final String COL_LOP_ID = "maLop";
+    public static final String COL_LOP_TEN = "tenLop";
+    public static final String COL_LOP_KHOA = "khoaHoc";
+
+    // Sinh viên Columns
+    public static final String COL_SV_ID = "maSV";
+    public static final String COL_SV_HOTEN = "hoTen";
+    public static final String COL_SV_NGAYSINH = "ngaySinh";
+    public static final String COL_SV_GIOITINH = "gioiTinh";
+    public static final String COL_SV_EMAIL = "email";
+    public static final String COL_SV_SDT = "soDienThoai";
+    public static final String COL_SV_DIACHI = "diaChi";
+    public static final String COL_SV_MALOP = "maLop";
+
+    // Tài khoản Columns
+    public static final String COL_TK_ID = "id";
+    public static final String COL_TK_USERNAME = "username";
+    public static final String COL_TK_PASSWORD = "password";
+    public static final String COL_TK_HOTEN = "hoTen";
+    public static final String COL_TK_EMAIL = "email";
+    public static final String COL_TK_ROLE = "role";
+    public static final String COL_TK_MASV = "maSV";
+
     // Môn học Columns
     public static final String COL_MH_ID = "maMH";
     public static final String COL_MH_TEN = "tenMH";
@@ -139,7 +163,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertSampleData(db);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 4) {
@@ -154,6 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAI_LIEU);
             onCreate(db);
         }
+    }
 
     private void insertSampleData(SQLiteDatabase db) {
         long cnttK14 = insertClass(db, "CNTT K18", "2023-2027");
@@ -182,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "khanhlinh@sv.edu.vn", "0967456123", "Nha Be, TP.HCM", (int) ktnnK16);
 
         insertAccount(db, "admin", "admin123", "Quan tri vien", "admin@school.edu.vn", "admin", -1);
-        insertAccount(db, "sv001", "giangvien123", "Le Van Giang", "giangvien@school.edu.vn", "admin", -1);
+        insertAccount(db, "gv001", "giangvien123", "Le Van Giang", "giangvien@school.edu.vn", "admin", -1);
         insertAccount(db, "sv001", "sv123456", "Nguyen Minh Anh", "minhanh@sv.edu.vn", "student", (int) sv1);
         insertAccount(db, "sv002", "sv123456", "Tran Quoc Bao", "quocbao@sv.edu.vn", "student", (int) sv2);
         insertAccount(db, "sv003", "sv123456", "Le Hoang Nam", "hoangnam@sv.edu.vn", "student", (int) sv3);
@@ -224,11 +248,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "Sinh vien vang qua 2 buoi o mon Lap trinh Android can lien he giang vien de bo sung bai tap va xac nhan chuyen can.",
                 "2026-05-10 18:20", 0, "attendance");
 
-        // Insert TKB & TaiLieu
         insertTKB(db, (int) sv1, (int) android, 2, 1, 3, "P.A101", "Lê Văn Giang", "all");
         insertTKB(db, (int) sv1, (int) ctDl, 4, 4, 6, "P.B202", "Nguyễn Văn B", "all");
         insertTKB(db, (int) sv1, (int) csdl, 6, 7, 9, "P.C303", "Trần Thị C", "all");
-        
+
         insertTaiLieu(db, (int) android, "Slide_Bai1_Android.pdf", "PDF", "2.5MB", "10/05/2026", "url");
         insertTaiLieu(db, (int) android, "Video_HuongDan_CaiDat.mp4", "Video", "150MB", "12/05/2026", "url");
     }
@@ -271,10 +294,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_MH_TINCHI, soTinChi);
         values.put(COL_MH_GV, giangVien);
         return db.insert(TABLE_MON_HOC, null, values);
-
     }
 
-    // --- MON HOC QUERIES ---
+    private void insertScore(SQLiteDatabase db, int maSV, int maMH,
+                             float diemGiuaKy, float diemCuoiKy, float diemBaiTap, String hocKy) {
+        ContentValues values = new ContentValues();
+        values.put("maSV", maSV);
+        values.put("maMH", maMH);
+        values.put("diemGiuaKy", diemGiuaKy);
+        values.put("diemCuoiKy", diemCuoiKy);
+        values.put("diemBaiTap", diemBaiTap);
+        values.put("hocKy", hocKy);
+        db.insert(TABLE_DIEM, null, values);
+    }
+
+    private void insertAttendance(SQLiteDatabase db, int maSV, int maMH, String ngay, int trangThai) {
+        ContentValues values = new ContentValues();
+        values.put("maSV", maSV);
+        values.put("maMH", maMH);
+        values.put("ngay", ngay);
+        values.put("trangThai", trangThai);
+        db.insert(TABLE_DIEM_DANH, null, values);
+    }
+
+    private void insertNotification(SQLiteDatabase db, String tieuDe, String noiDung,
+                                    String ngayTao, int daDoc, String loai) {
+        ContentValues values = new ContentValues();
+        values.put("tieuDe", tieuDe);
+        values.put("noiDung", noiDung);
+        values.put("ngayTao", ngayTao);
+        values.put("daDoc", daDoc);
+        values.put("loai", loai);
+        db.insert(TABLE_THONG_BAO, null, values);
+    }
+
+    private void insertTKB(SQLiteDatabase db, int maSV, int maMH, int thu,
+                           int tietBatDau, int tietKetThuc, String phongHoc,
+                           String tenGiangVien, String tuan) {
+        ContentValues values = new ContentValues();
+        values.put("maSV", maSV);
+        values.put("maMH", maMH);
+        values.put("thu", thu);
+        values.put("tietBatDau", tietBatDau);
+        values.put("tietKetThuc", tietKetThuc);
+        values.put("phongHoc", phongHoc);
+        values.put("tenGiangVien", tenGiangVien);
+        values.put("tuan", tuan);
+        db.insert(TABLE_THOI_KHOA_BIEU, null, values);
+    }
+
+    private void insertTaiLieu(SQLiteDatabase db, int maMH, String tenFile,
+                               String loaiFile, String kichThuoc,
+                               String ngayDang, String urlOrPath) {
+        ContentValues values = new ContentValues();
+        values.put("maMH", maMH);
+        values.put("tenFile", tenFile);
+        values.put("loaiFile", loaiFile);
+        values.put("kichThuoc", kichThuoc);
+        values.put("ngayDang", ngayDang);
+        values.put("urlOrPath", urlOrPath);
+        db.insert(TABLE_TAI_LIEU, null, values);
+    }
 
     public List<MonHoc> getAllMonHoc() {
         List<MonHoc> list = new ArrayList<>();
@@ -424,8 +504,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return registered;
     }
 
-    // --- SINH VIEN QUERIES ---
-
     public List<SinhVien> getAllSinhVien() {
         List<SinhVien> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -539,6 +617,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
     public SinhVien getSinhVienById(int maSV) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -567,28 +646,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
 
         try {
-            // Xóa dữ liệu điểm của sinh viên
-            db.delete(
-                    TABLE_DIEM,
-                    "maSV = ?",
-                    new String[]{String.valueOf(maSV)}
-            );
+            db.delete(TABLE_DIEM, "maSV = ?", new String[]{String.valueOf(maSV)});
+            db.delete(TABLE_DIEM_DANH, "maSV = ?", new String[]{String.valueOf(maSV)});
+            db.delete(TABLE_TAI_KHOAN, "maSV = ?", new String[]{String.valueOf(maSV)});
 
-            // Xóa dữ liệu điểm danh của sinh viên
-            db.delete(
-                    TABLE_DIEM_DANH,
-                    "maSV = ?",
-                    new String[]{String.valueOf(maSV)}
-            );
-
-            // Xóa tài khoản gắn với sinh viên
-            db.delete(
-                    TABLE_TAI_KHOAN,
-                    "maSV = ?",
-                    new String[]{String.valueOf(maSV)}
-            );
-
-            // Xóa sinh viên
             int rows = db.delete(
                     TABLE_SINH_VIEN,
                     "maSV = ?",
@@ -625,8 +686,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return sv;
     }
-
-    // --- TAI KHOAN / AUTH QUERIES ---
 
     public TaiKhoan checkLogin(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -805,6 +864,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return rows > 0;
     }
+
     public boolean resetPassword(String username, String email, String newHashedPassword) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -832,8 +892,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getInt(cursor.getColumnIndexOrThrow("maSV"))
         );
     }
-
-    // --- DIEM DANH QUERIES ---
 
     public List<DiemDanh> getDiemDanhBySinhVien(int maSV, int maMH) {
         List<DiemDanh> list = new ArrayList<>();
@@ -878,6 +936,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
     public long insertDiemDanh(DiemDanh dd) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -889,8 +948,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return db.insert(TABLE_DIEM_DANH, null, values);
     }
-
-    // --- THONG BAO QUERIES ---
 
     public int countUnreadThongBao() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -909,6 +966,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     public List<ThongBao> getAllThongBao() {
         List<ThongBao> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -993,8 +1051,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_THONG_BAO, null, values);
     }
 
-    // --- DIEM / MON HOC EXTRA ---
-
     public List<Diem> getDiemBySinhVien(int maSV, String hocKy) {
         List<Diem> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1055,6 +1111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return gpa;
     }
+
     public float getGPA(int maSV) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1153,6 +1210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
     public boolean deleteMonHoc(int maMH) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1265,65 +1323,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.close();
         return count;
-    }
-    private void insertSampleData(SQLiteDatabase db) {
-        ContentValues v = new ContentValues();
-        v.put("tenLop", "CNTT K18");
-        v.put("khoaHoc", "2023-2027");
-        long lopId = db.insert(TABLE_LOP, null, v);
-
-        ContentValues admin = new ContentValues();
-        admin.put("hoTen", "Admin User");
-        admin.put("role", "admin");
-        admin.put("username", "admin");
-        admin.put("password", SecurityUtils.sha256("admin123"));
-        admin.put("email", "admin@qlsv.com");
-        admin.put("maSV", -1);
-        db.insert(TABLE_TAI_KHOAN, null, admin);
-
-        ContentValues sv = new ContentValues();
-        sv.put("hoTen", "Nguyễn Văn An");
-        sv.put("ngaySinh", "01/01/2004");
-        sv.put("gioiTinh", "Nam");
-        sv.put("email", "sv01@qlsv.com");
-        sv.put("soDienThoai", "0987654321");
-        sv.put("diaChi", "Hà Nội");
-        sv.put("maLop", lopId);
-        long maSV = db.insert(TABLE_SINH_VIEN, null, sv);
-
-        ContentValues user = new ContentValues();
-        user.put("hoTen", "Nguyễn Văn An");
-        user.put("role", "student");
-        user.put("username", "sv01");
-        user.put("password", SecurityUtils.sha256("123456"));
-        user.put("email", "sv01@qlsv.com");
-        user.put("maSV", maSV);
-        db.insert(TABLE_TAI_KHOAN, null, user);
-
-        ContentValues mh = new ContentValues();
-        mh.put(COL_MH_TEN, "Java nâng cao");
-        mh.put(COL_MH_GV, "GV Nguyễn Văn B");
-        mh.put(COL_MH_TINCHI, 3);
-        mh.put(COL_MH_LICHHOC, "Thứ 2 - Tiết 1-3");
-        mh.put(COL_MH_TAILIEU, "Tài liệu Java");
-        mh.put(COL_MH_SOLUONGMAX, 65);
-        long maMH = db.insert(TABLE_MON_HOC, null, mh);
-
-        ContentValues diem = new ContentValues();
-        diem.put("maSV", maSV);
-        diem.put("maMH", maMH);
-        diem.put("hocKy", "HK1-2025");
-        diem.put("diemGiuaKy", 0);
-        diem.put("diemCuoiKy", 0);
-        diem.put("diemBaiTap", 0);
-        db.insert(TABLE_DIEM, null, diem);
-
-        ContentValues tb = new ContentValues();
-        tb.put("tieuDe", "Chào mừng bạn");
-        tb.put("noiDung", "Chào mừng bạn đến với hệ thống quản lý sinh viên.");
-        tb.put("ngayTao", "01/01/2026 08:00");
-        tb.put("daDoc", 0);
-        tb.put("loai", "general");
-        db.insert(TABLE_THONG_BAO, null, tb);
     }
 }
