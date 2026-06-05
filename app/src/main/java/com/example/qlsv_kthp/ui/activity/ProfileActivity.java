@@ -3,13 +3,20 @@ package com.example.qlsv_kthp.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.qlsv_kthp.R;
 import com.example.qlsv_kthp.databinding.ActivityProfileBinding;
+import com.example.qlsv_kthp.databinding.DialogChangePasswordBinding;
 import com.example.qlsv_kthp.db.DatabaseHelper;
+import com.example.qlsv_kthp.model.SinhVien;
 import com.example.qlsv_kthp.model.TaiKhoan;
+import com.example.qlsv_kthp.util.SecurityUtils;
 import com.example.qlsv_kthp.util.SessionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -31,8 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
         bindProfile();
 
         binding.btnAccountInfo.setOnClickListener(v -> showAccountInfo());
-        binding.btnChangePassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
-        binding.btnCreateNotification.setVisibility(session.isAdmin() ? android.view.View.VISIBLE : android.view.View.GONE);
+        binding.btnChangePassword.setOnClickListener(v -> showChangePasswordDialog());
+        binding.btnCreateNotification.setVisibility(session.isAdmin() ? View.VISIBLE : View.GONE);
         binding.btnCreateNotification.setOnClickListener(v -> {
             android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
             layout.setOrientation(android.widget.LinearLayout.VERTICAL);
@@ -54,26 +61,87 @@ public class ProfileActivity extends AppCompatActivity {
                         String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
                         String content = etContent.getText() != null ? etContent.getText().toString().trim() : "";
                         if (title.isEmpty() || content.isEmpty()) {
-                            android.widget.Toast.makeText(this, "Vui lòng nhập đầy đủ", android.widget.Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Vui lòng nhập đầy đủ", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String date = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
                         com.example.qlsv_kthp.model.ThongBao tb = new com.example.qlsv_kthp.model.ThongBao(0, title, content, date, 0, "general");
                         dbHelper.insertThongBao(tb);
-                        android.widget.Toast.makeText(this, "Tạo thông báo thành công", android.widget.Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Tạo thông báo thành công", Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("Hủy", null)
                     .show();
         });
-        binding.btnDemoAccounts.setVisibility(android.view.View.GONE);
+        binding.btnDemoAccounts.setVisibility(View.GONE);
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
+    }
+
+    private void showChangePasswordDialog() {
+        DialogChangePasswordBinding dialogBinding = DialogChangePasswordBinding.inflate(getLayoutInflater());
+        
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Đổi mật khẩu")
+                .setView(dialogBinding.getRoot())
+                .setPositiveButton("Cập nhật", null)
+                .setNegativeButton("Hủy", null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+                String oldPass = dialogBinding.etOldPassword.getText().toString().trim();
+                String newPass = dialogBinding.etNewPassword.getText().toString().trim();
+                String confirmPass = dialogBinding.etConfirmPassword.getText().toString().trim();
+
+                if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
+                    Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!newPass.equals(confirmPass)) {
+                    Toast.makeText(this, "Mật khẩu mới không khớp", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (newPass.length() < 6) {
+                    Toast.makeText(this, "Mật khẩu phải ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String oldHashed = SecurityUtils.sha256(oldPass);
+                String newHashed = SecurityUtils.sha256(newPass);
+
+                boolean success = dbHelper.changePassword(session.getUserId(), oldHashed, newHashed);
+                if (success) {
+                    Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(this, "Mật khẩu cũ không chính xác", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        dialog.show();
     }
 
     private void bindProfile() {
         String name = session.getFullName();
         binding.tvFullName.setText(name);
-        binding.tvUserRole.setText(session.isAdmin() ? "Giảng viên / Quản trị" : "Sinh viên");
-        binding.tvUserMeta.setText(session.isAdmin() ? "Tài khoản hệ thống" : "Hồ sơ cá nhân");
+        
+        if (session.isAdmin()) {
+            binding.tvUserRole.setText("Giảng viên / Quản trị");
+            binding.tvUserMeta.setText("Tài khoản hệ thống");
+        } else {
+            binding.tvUserRole.setText("Sinh viên");
+            SinhVien sv = dbHelper.getSinhVienById(session.getMaSV());
+            if (sv != null && sv.getTenLop() != null) {
+                binding.tvUserMeta.setText("Lớp: " + sv.getTenLop());
+                binding.tvUserMeta.setOnClickListener(v -> 
+                    startActivity(new Intent(this, StudentDocumentActivity.class)));
+                binding.tvUserMeta.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+            } else {
+                binding.tvUserMeta.setText("Chưa xếp lớp");
+            }
+        }
 
         if (!TextUtils.isEmpty(name)) {
             String[] parts = name.trim().split("\\s+");
