@@ -12,7 +12,7 @@ public class SinhVien {
     private String soDienThoai;
     private String diaChi;
     private int maLop;
-    private String tenLop; // Trường mở rộng để hiển thị tên lớp từ bảng LOP
+    private String tenLop;
 
     public SinhVien() {}
 
